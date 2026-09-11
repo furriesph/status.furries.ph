@@ -30,15 +30,23 @@ const run = (target, options = {}) =>
     { id: target, check: { kind: "operations", target } },
     { now, env, ...options },
   );
-test("quiet telemetry does not invent workflow uptime; requests are count-only", async () => {
+test("quiet telemetry remains unknown unless the read establishes an idle queue state", async () => {
   for (const target of operationTargets.filter(
-    (t) => !["sms", "payments"].includes(t),
+    (t) => !["sms", "payments", "jobs", "federation", "lan"].includes(t),
   )) {
     const f = fixture();
     const result = await run(target, f);
     assert.equal(result.status, "unknown", target);
     assert.equal(result.evidence, "monitoring-gap");
     assert.ok(f.calls.length);
+  }
+});
+test("idle queues and inactive LAN sessions are known operational states", async () => {
+  for (const target of ["jobs", "federation", "lan"]) {
+    const result = await run(target, fixture());
+    assert.equal(result.status, "operational", target);
+    assert.equal(result.evidence, "direct", target);
+    assert.match(result.message, /idle|currently active/i, target);
   }
 });
 test("recent success on every email path establishes scoped dispatch evidence", async () => {

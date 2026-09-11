@@ -121,12 +121,17 @@ export async function probeOperations(
   function totals(samples) {
     return `Last 15 min: ${samples.reduce((n, s) => n + s.successes, 0)} successful, ${samples.reduce((n, s) => n + s.failures, 0)} failed; ${samples.reduce((n, s) => n + s.overdue, 0)} overdue/stalled.`;
   }
-  function summarize(name, samples, caveat = "", ready = false) {
+  function summarize(name, samples, caveat = "", ready = false, idleKnown = false) {
     const summary = `${name}. ${totals(samples)} ${caveat}`.trim();
     if (samples.some((s) => s.failures || s.overdue))
       return result("degraded", summary);
     if (ready || samples.every((s) => s.successes > 0))
       return result("operational", summary);
+    if (idleKnown)
+      return result(
+        "operational",
+        `${summary} The monitored queues are currently idle and readable; active execution is not being exercised.`,
+      );
     return gap(`${summary} Current execution evidence is incomplete.`);
   }
   // Read-only provider identity/readiness endpoints. No sends, charges or OAuth changes.
@@ -352,6 +357,8 @@ export async function probeOperations(
         "Background dispatch",
         samples,
         "Evidence covers asset webhooks and planning outbox only; other scheduled jobs need separate telemetry.",
+        false,
+        true,
       );
     }
     if (target === "federation") {
@@ -363,6 +370,8 @@ export async function probeOperations(
         "Social publishing",
         [sample],
         "Evidence covers recorded provider publishing; federation inbox delivery is not tested.",
+        false,
+        true,
       );
     }
     if (target === "payments") {
@@ -418,8 +427,13 @@ export async function probeOperations(
         "operational",
         "Recent active LAN session heartbeats and successfully projected synchronization operations were observed. Local device functions are not exercised.",
       );
+    if (!active)
+      return result(
+        "operational",
+        `LAN telemetry is readable: 0 active unexpired sessions, ${projected} recent projected operations, ${failed} recent conflicts/rejections. No LAN session is currently active, so synchronization is idle and not being exercised.`,
+      );
     return gap(
-      `LAN telemetry: ${active} active unexpired sessions, ${seen} fresh heartbeats, ${projected} recent projected operations, ${failed} recent conflicts/rejections. No recent session and operation pair establishes synchronization availability.`,
+      `LAN telemetry: ${active} active unexpired sessions, ${seen} fresh heartbeats, ${projected} recent projected operations, ${failed} recent conflicts/rejections. An active session lacks the evidence needed to establish synchronization availability.`,
     );
   } catch (error) {
     return gap(
