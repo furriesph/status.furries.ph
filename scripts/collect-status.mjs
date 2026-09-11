@@ -1,4 +1,4 @@
-import { readFile, writeFile, rename, open, unlink } from "node:fs/promises";
+import { readFile, writeFile, rename, open, unlink, mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import {
   validateServices,
@@ -91,6 +91,7 @@ const snapshot = validateSnapshot(
 // Serialize publication across an interactive collector and the local watcher.
 // The lock prevents two processes from reusing the same atomic replacement path.
 const lockPath = fileURLToPath(new URL("output/collector.publish.lock", root));
+await mkdir(new URL("output/", root), { recursive: true });
 let lock;
 try {
   lock = await open(lockPath, "wx");
