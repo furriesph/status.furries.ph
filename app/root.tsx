@@ -1,6 +1,6 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { PawPrint, ExternalLink } from "lucide-react";
-import { statusUrl } from "./lib/status";
+import { statusDownloadUrl } from "./lib/status";
 import "./styles.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -29,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <a href="https://furries.ph">
                 Platform <ExternalLink size={13} />
               </a>
-              <a href={statusUrl}>Status JSON</a>
+              <a href={statusDownloadUrl}>Status JSON</a>
             </nav>
           </div>
         </header>
@@ -49,7 +49,7 @@ export function HydrateFallback() {
       <h1>Platform status</h1>
       <p>Loading status information…</p>
       <p>
-        <a href={statusUrl}>View the status JSON feed</a>
+        <a href={statusDownloadUrl}>View the status JSON feed</a>
       </p>
     </main>
   );
@@ -61,7 +61,7 @@ export function ErrorBoundary() {
       <p>
         Monitoring failure: we could not display status information. Service health is unknown until fresh checks are available.
       </p>
-      <a href={statusUrl}>View the status JSON feed</a>
+      <a href={statusDownloadUrl}>View the status JSON feed</a>
     </main>
   );
 }

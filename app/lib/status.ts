@@ -37,7 +37,15 @@ function publicUrl(value: unknown, fallback: string): string {
   return fallback;
 }
 export const statusUrl = publicUrl(
-  import.meta.env.VITE_STATUS_URL,
+  import.meta.env.PROD
+    ? "https://api.github.com/repos/furriesph/status.furries.ph/contents/status.json?ref=status-data"
+    : import.meta.env.VITE_STATUS_URL,
+  "/status.json",
+);
+export const statusDownloadUrl = publicUrl(
+  import.meta.env.PROD
+    ? "https://raw.githubusercontent.com/furriesph/status.furries.ph/status-data/status.json"
+    : import.meta.env.VITE_STATUS_URL,
   "/status.json",
 );
 export const feedUrl = publicUrl(import.meta.env.VITE_FEED_URL, "/feed.xml");

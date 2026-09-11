@@ -19,6 +19,9 @@ export function useStatus(services: Service[]) {
         signal: controller.signal,
         cache: "no-store",
         credentials: "omit",
+        headers: {
+          Accept: "application/vnd.github.raw",
+        },
       });
       if (!response.ok) throw new Error("Status feed unavailable");
       const text = await response.text();

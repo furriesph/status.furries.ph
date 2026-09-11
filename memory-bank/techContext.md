@@ -6,7 +6,7 @@ Commands: `pnpm dev`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm monitor
 
 Hosting target: Cloudflare Pages; output: `build/client`. Monitoring target: scheduled GitHub Actions every 10 minutes. It atomically retains `status.json` and `feed.xml` on the public `status-data` branch. Collector-only provider credentials are required for project telemetry; see .env.monitor.example and the runbook for GitHub secret mappings. No browser secrets or deployment credentials are needed for collection.
 
-Production `VITE_STATUS_URL` and `VITE_FEED_URL` point to publicly readable raw files on the public `status-data` branch or a public mirror. Never authenticate public browser data access with a token. CDN caching can delay observations. Local status URL defaults to `/status.json`.
+The production browser fetches the public GitHub Contents API for `status-data` with GitHub's raw-media response, which has a short public cache. Downloadable JSON and RSS links use public raw branch files. Never authenticate public browser data access with a token. Local status URL defaults to `/status.json`.
 
 No live deployment is established by scaffolding. Initial repository inspection found no configured Git remote. Activation requirements and incident procedures are in `docs/runbook.md`.
 
