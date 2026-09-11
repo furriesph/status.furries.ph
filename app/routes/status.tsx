@@ -277,7 +277,7 @@ export default function StatusPage() {
           <p>
             The collector runs every 10 minutes. Scheduling and feed caching
             can delay updates. This page refreshes every 10 minutes;
-            observations older than 15 minutes become Unknown with a
+            observations older than 30 minutes become Unknown with a
             monitoring-failure explanation. A failed feed request does the same.
           </p>
           <h3>History without guesswork</h3>

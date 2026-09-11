@@ -7,7 +7,10 @@ import type {
   Status,
 } from "./types";
 
-export const STALE_MS = 15 * 60 * 1000;
+// GitHub Actions schedules every ten minutes but does not guarantee an exact
+// start time. Thirty minutes catches a genuinely missing collector without
+// turning a healthy snapshot Unknown during ordinary queue delay.
+export const STALE_MS = 30 * 60 * 1000;
 export const labels: Record<Status, string> = {
   operational: "Operational",
   unknown: "Unknown",
@@ -219,7 +222,7 @@ export function monitoringGap(
   if (unavailable)
     return "Monitoring failure: the current status feed could not be verified.";
   if (!isFresh(snapshot.generatedAt, now))
-    return "Monitoring failure: status updates are missing or older than 15 minutes.";
+    return "Monitoring failure: status updates are missing or older than 30 minutes.";
   const observation = snapshot.observations.find(
     (item) => item.serviceId === service.id,
   );

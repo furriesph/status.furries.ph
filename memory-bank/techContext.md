@@ -4,7 +4,7 @@ Stack: React 19, React Router 8 SPA mode, Vite 8, TypeScript, Tailwind CSS 4 and
 
 Commands: `pnpm dev`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm monitor`, `pnpm monitor:watch`, `pnpm validate:data`.
 
-Hosting target: Cloudflare Pages; output: `build/client`. Monitoring target: scheduled GitHub Actions every 10 minutes. It atomically retains `status.json` and `feed.xml` on the public `status-data` branch. Collector-only provider credentials are required for project telemetry; see .env.monitor.example and the runbook for GitHub secret mappings. No browser secrets or deployment credentials are needed for collection.
+Hosting target: Cloudflare Pages; output: `build/client`. Monitoring target: scheduled GitHub Actions every 10 minutes at explicit off-peak minute marks. A published snapshot remains current for 30 minutes to accommodate normal GitHub Actions queue delay, then becomes Unknown. The workflow atomically retains `status.json` and `feed.xml` on the public `status-data` branch. Collector-only provider credentials are required for project telemetry; see .env.monitor.example and the runbook for GitHub secret mappings. No browser secrets or deployment credentials are needed for collection.
 
 The production browser fetches the public GitHub Contents API for `status-data` with GitHub's raw-media response, which has a short public cache. Downloadable JSON and RSS links use public raw branch files. Never authenticate public browser data access with a token. Local status URL defaults to `/status.json`.
 

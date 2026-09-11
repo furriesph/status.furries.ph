@@ -36,11 +36,11 @@ Collection makes network requests and updates generated public status data. Insp
 - **Unknown:** evidence is genuinely unavailable, invalid, stale or insufficient for the stated workflow; the detail explains why.
 - **Not launched:** an explicitly configured prelaunch service.
 
-The page identifies evidence and last-check times. Expanding a service shows three time-aware progress bars for observation freshness, the 3-second response-time budget and recorded 30-day success, followed by product capacity bars where the collector has a real ceiling. Each detail also separates observed evidence, possible causes and the next check. A striped bar means the collector has a count but no actual quota; it never estimates a limit. Observations older than 15 minutes are stale. History retains up to 30 days of measured samples; gaps are not successes. Sample availability is not continuous uptime or an SLA.
+The page identifies evidence and last-check times. Expanding a service shows three time-aware progress bars for observation freshness, the 3-second response-time budget and recorded 30-day success, followed by product capacity bars where the collector has a real ceiling. Each detail also separates observed evidence, possible causes and the next check. A striped bar means the collector has a count but no actual quota; it never estimates a limit. Observations older than 30 minutes are stale. History retains up to 30 days of measured samples; gaps are not successes. Sample availability is not continuous uptime or an SLA.
 
 Daily UTC aggregates preserve the worst observed status and actual check counts while keeping the public feed small. Expand any service for its history and monitoring scope.
 
-Internal workflows require fresh service-owned evidence even while their public landing pages respond successfully. Real platform reads, queue receipts and media checks replace heartbeat placeholders. An idle queue does not prove delivery; insufficient recent evidence remains Unknown. Historical dates without samples display neutral No data. Review the inventory when a platform surface is added, renamed or retired.
+Internal workflows require fresh service-owned evidence even while their public landing pages respond successfully. Real platform reads, queue receipts and media checks replace heartbeat placeholders. Readable empty LAN, publishing and job queues report an idle operational state while explicitly not certifying live execution or delivery. Historical dates without samples display neutral No data. Review the inventory when a platform surface is added, renamed or retired.
 
 ## Monitoring and hosting
 
