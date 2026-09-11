@@ -1,0 +1,480 @@
+[
+  {
+    "id": "website",
+    "name": "Furries PH website",
+    "group": "Public services",
+    "description": "Community website and public information.",
+    "url": "https://furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "rego",
+    "name": "RegoSite",
+    "group": "Public services",
+    "description": "Event discovery, registration and ticketing.",
+    "url": "https://rego.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://rego.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "dashboard",
+    "name": "Partners dashboard",
+    "group": "Public services",
+    "description": "Workspace for partners and event organizers.",
+    "url": "https://partners.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://partners.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "social",
+    "name": "Socials",
+    "group": "Public services",
+    "description": "Social content and publishing workspace.",
+    "url": "https://social.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://social.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "moderation",
+    "name": "Moderation portal",
+    "group": "Public services",
+    "description": "Community moderation and safety workspace.",
+    "url": "https://moderation.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://moderation.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "support",
+    "name": "Support portal",
+    "group": "Public services",
+    "description": "Help, support requests and issue reporting.",
+    "url": "https://support.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://support.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "docs",
+    "name": "Documentation",
+    "group": "Public services",
+    "description": "Platform guides and documentation.",
+    "url": "https://docs.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://docs.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "cms",
+    "name": "Content studio",
+    "group": "Public services",
+    "description": "Studio signed-out access gate and shell availability; authenticated editing and SSO are not exercised.",
+    "url": "https://cms.furries.ph/",
+    "check": {
+      "kind": "cms"
+    }
+  },
+  {
+    "id": "join",
+    "name": "Platform waitlist",
+    "group": "Public services",
+    "description": "Membership and community onboarding.",
+    "url": "https://join.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://join.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "signals",
+    "name": "Signals",
+    "group": "Public services",
+    "description": "Community signals and feedback.",
+    "url": "https://signals.furries.ph/",
+    "check": {
+      "kind": "http",
+      "url": "https://signals.furries.ph/",
+      "expectedStatus": 200,
+      "contains": "furries"
+    }
+  },
+  {
+    "id": "api",
+    "name": "Platform API",
+    "group": "Infrastructure",
+    "description": "Public Worker API geography route. Confirms routing and static API responses; authentication and database workflows are monitored separately.",
+    "url": "https://api.furries.ph/api/geo/countries",
+    "check": {
+      "kind": "http",
+      "url": "https://api.furries.ph/api/geo/countries",
+      "expectedStatus": 200,
+      "contains": "Philippines"
+    },
+    "dependencies": ["cloudflare-provider"]
+  },
+  {
+    "id": "admin-portal",
+    "name": "Administration portal",
+    "group": "Public services",
+    "description": "Planned administration entry point. The sibling repository is scaffolded; the endpoint may not yet be deployed.",
+    "url": "https://admin.furries.ph/",
+    "check": {
+      "kind": "lifecycle",
+      "reason": "Not launched: the administration portal is a prelaunch scaffold."
+    }
+  },
+  {
+    "id": "auth",
+    "name": "Authentication & account security",
+    "group": "Infrastructure",
+    "description": "Supabase Auth service health; account actions have separate service checks.",
+    "check": {
+      "kind": "supabase",
+      "target": "auth"
+    },
+    "dependencies": ["supabase-provider"]
+  },
+  {
+    "id": "database",
+    "name": "Operational database",
+    "group": "Infrastructure",
+    "description": "Read-only query against the project database.",
+    "check": {
+      "kind": "supabase",
+      "target": "database"
+    },
+    "dependencies": ["supabase-provider"]
+  },
+  {
+    "id": "media",
+    "name": "Media & file delivery",
+    "group": "Infrastructure",
+    "description": "Public image delivery through the platform media proxy; verified response payload.",
+    "check": {
+      "kind": "media",
+      "url": "https://api.furries.ph/api/img/7bbcd9b8308beca0a1411bec64d5ad1132fc75e3-400x400.webp"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "admin",
+    "name": "Platform administration",
+    "group": "Operations",
+    "description": "Privileged platform administration and access control. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "admin"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "ems",
+    "name": "Event management (EMS)",
+    "group": "Operations",
+    "description": "Event configuration, registration management and operational handoff. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "ems"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "eps",
+    "name": "Event planning (EPS)",
+    "group": "Operations",
+    "description": "Projects, meetings, approvals, deliverables and evidence. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "eps"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "finance",
+    "name": "Finance management",
+    "group": "Operations",
+    "description": "Budgets, finance programmes, reconciliation and payment accounts. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "finance"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "assets",
+    "name": "Asset management",
+    "group": "Operations",
+    "description": "Inventory, asset custody, assignments and evidence. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "assets"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "hr",
+    "name": "People & workforce",
+    "group": "Operations",
+    "description": "Staff profiles, roles and workforce coordination. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "hr"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "lan",
+    "name": "LAN event operations",
+    "group": "Operations",
+    "description": "Onsite check-in, offline continuity and authenticated synchronization.",
+    "check": {
+      "kind": "operations",
+      "target": "lan"
+    }
+  },
+  {
+    "id": "pawsports",
+    "name": "Pawsports",
+    "group": "Community workflows",
+    "description": "Issuing, linking and binding Pawsports. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "pawsports"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "reports",
+    "name": "Safety reports & appeals",
+    "group": "Community workflows",
+    "description": "Incident reporting, watchlists, bans and appeals. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "reports"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "registration",
+    "name": "Registration & ticketing",
+    "group": "Community workflows",
+    "description": "Attendee registration, reservations, transfers, upgrades and refunds. Monitoring checks service data availability and public discovery API.",
+    "check": {
+      "kind": "platform",
+      "target": "registration"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "payments",
+    "name": "Payment records & reconciliation",
+    "group": "Community workflows",
+    "description": "Manual payment confirmation, receipts and reconciliation.",
+    "check": {
+      "kind": "operations",
+      "target": "payments"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "external-checkout",
+    "name": "Hosted external checkout",
+    "group": "Community workflows",
+    "description": "Card, wallet or other hosted payment-provider checkout.",
+    "check": {
+      "kind": "lifecycle",
+      "reason": "Not launched: no hosted external payment provider is configured for the platform."
+    }
+  },
+  {
+    "id": "dealers",
+    "name": "Dealers, groups & event shop",
+    "group": "Community workflows",
+    "description": "Dealer applications, group registration and event merchandise. Monitoring checks service data availability; protected actions are not exercised.",
+    "check": {
+      "kind": "platform",
+      "target": "dealers"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "social-workflows",
+    "name": "Social feeds & messaging",
+    "group": "Community workflows",
+    "description": "Posting, timelines, messaging and account boundaries. Monitoring checks service data availability and public discovery API.",
+    "check": {
+      "kind": "platform",
+      "target": "social-workflows"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "federation",
+    "name": "Social federation & publishing",
+    "group": "Community workflows",
+    "description": "Federated delivery, connected accounts and scheduled publishing.",
+    "check": {
+      "kind": "operations",
+      "target": "federation"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "surveys",
+    "name": "Surveys & feedback",
+    "group": "Community workflows",
+    "description": "Event feedback, survey responses and report schedules. Monitoring checks service data availability and public discovery API.",
+    "check": {
+      "kind": "platform",
+      "target": "surveys"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "email",
+    "name": "Email delivery",
+    "group": "Communications",
+    "description": "Transactional email, campaigns, reminders and delivery receipts.",
+    "check": {
+      "kind": "operations",
+      "target": "email"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "discord-delivery",
+    "name": "Discord delivery",
+    "group": "Communications",
+    "description": "Consented Discord notifications and bot delivery.",
+    "check": {
+      "kind": "operations",
+      "target": "discord"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "telegram-delivery",
+    "name": "Telegram delivery",
+    "group": "Communications",
+    "description": "Consented Telegram notifications and bot delivery.",
+    "check": {
+      "kind": "operations",
+      "target": "telegram"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "sms",
+    "name": "SMS delivery",
+    "group": "Communications",
+    "description": "Gateway readiness, consent, SIM availability and delivery receipts.",
+    "check": {
+      "kind": "operations",
+      "target": "sms"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "jobs",
+    "name": "Background jobs & webhooks",
+    "group": "Infrastructure",
+    "description": "Scheduled reminders, evidence scans, projections and outbound webhooks.",
+    "check": {
+      "kind": "operations",
+      "target": "jobs"
+    },
+    "dependencies": ["api", "database"]
+  },
+  {
+    "id": "supabase-provider",
+    "name": "Supabase provider",
+    "group": "Infrastructure",
+    "description": "Provider incidents affecting Database, Auth and API Gateway.",
+    "url": "https://status.supabase.com/",
+    "check": {
+      "kind": "provider",
+      "provider": "supabase",
+      "components": ["Database", "Auth", "API Gateway"]
+    }
+  },
+  {
+    "id": "cloudflare-provider",
+    "name": "Cloudflare provider",
+    "group": "Infrastructure",
+    "description": "Provider incidents affecting Workers, Pages and CDN.",
+    "url": "https://www.cloudflarestatus.com/",
+    "check": {
+      "kind": "provider",
+      "provider": "cloudflare",
+      "components": ["Workers", "Pages", "CDN/Cache"]
+    }
+  },
+  {
+    "id": "database-capacity",
+    "name": "Database capacity",
+    "group": "Infrastructure",
+    "description": "Database connection and filesystem resource pressure.",
+    "check": {
+      "kind": "supabase",
+      "target": "capacity"
+    }
+  },
+  {
+    "id": "cloudflare-workers",
+    "name": "Worker execution health",
+    "group": "Infrastructure",
+    "description": "Account analytics for Worker errors and resource-limit failures.",
+    "check": {
+      "kind": "cloudflare",
+      "target": "workers"
+    }
+  },
+  {
+    "id": "supabase-product-limits",
+    "name": "Supabase product limits",
+    "group": "Infrastructure",
+    "description": "Live database, Auth, Realtime and pooler capacity limits.",
+    "check": {
+      "kind": "supabase",
+      "target": "limits"
+    }
+  },
+  {
+    "id": "request-limits",
+    "name": "Cloudflare usage limits",
+    "group": "Infrastructure",
+    "description": "Live account usage, daily-limit scope, throttling and server-error telemetry.",
+    "check": {
+      "kind": "cloudflare",
+      "target": "requests"
+    }
+  }
+]
