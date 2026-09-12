@@ -96,3 +96,7 @@ Replaced the collector account and zone configuration with the active production
 ### 2026-09-13 - Desktop compact service rows
 
 The desktop default now uses the same compact two-row service summary as the constrained layout: service name and status share the first row, while the 30-day history fills the row beneath. Expanded diagnostics are unchanged. Typecheck, test, data validation, build and live visual checks are pending deployment verification.
+
+### 2026-09-13 - Sanity media-pool counters
+
+The Sanity component now publishes live image/file byte totals, a combined asset-pool progress counter and a document-pool progress counter whenever the verified account allowances are configured as repository variables. It also consumes provider rate-limit headers when available. Sanity's public APIs do not expose the Management usage dashboard, plan identity or monthly quota consumption, so empty allowance variables and absent headers are visibly unavailable instead of inferred.

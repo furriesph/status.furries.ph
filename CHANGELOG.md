@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add Sanity shared-asset and document-pool counters from verified plan allowances, plus response-header API rate-window reporting when available.
+
+## Unreleased
+
 - Expand coverage to 39 components with Supabase query/auth/database-capacity probes, Cloudflare runtime/request analytics and public provider incident feeds.
 - Detect rate limits, slow HTTP responses, database headroom warnings and configured account request budgets.
 - Preserve Unknown for genuinely unavailable/stale/insufficient evidence; add Not launched and neutral historical No data.

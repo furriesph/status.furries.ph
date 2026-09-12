@@ -237,29 +237,59 @@ function productMetrics(service: Service, message: string): Metric[] {
   if (service.id === "sanity-media-pools") {
     const pools = /Live Sanity Content Lake media pools:\s*(\d+) image assets \/ ([^;]+);\s*(\d+) file assets \/ ([^;]+);\s*(\d+) documents/i.exec(message);
     if (!pools) return [];
-    return [
+    const quotas = /Live media-pool quotas:\s*shared assets (\d+) B \/ (?:(\d+) B \((\d+)%\)|unavailable);\s*documents (\d+) \/ (?:(\d+) \((\d+)%\)|unavailable)/i.exec(message);
+    const rateWindow = /Direct Content Lake API rate window:\s*(\d+) \/ (\d+) used \((\d+)%\);\s*(\d+) remaining/i.exec(message);
+    const imageBytes = parseByteLabel(pools[2]);
+    const fileBytes = parseByteLabel(pools[4]);
+    const metrics: Metric[] = [];
+    if (quotas) {
+      const assetUsage = Number(quotas[1]);
+      const assetLimit = quotas[2] ? Number(quotas[2]) : null;
+      metrics.push({
+        label: "Shared asset storage pool",
+        value: assetLimit ? `${formatBytes(assetUsage)} / ${formatBytes(assetLimit)}` : `${formatBytes(assetUsage)} / unavailable`,
+        percent: quotas[3] ? Number(quotas[3]) : null,
+        note: assetLimit
+          ? "Live combined image-and-file storage against the configured account allowance."
+          : "Live combined image-and-file storage; the account allowance is not configured for the collector.",
+        tone: quotas[3] ? capacityTone(Number(quotas[3])) : "neutral",
+      });
+    }
+    metrics.push(
       {
         label: "Image assets",
         value: `${Number(pools[1]).toLocaleString()} · ${pools[2]}`,
-        percent: null,
-        note: "Live aggregate from Sanity Content Lake. Individual asset metadata is not published.",
-        tone: "neutral" as const,
+        percent: imageBytes !== null && quotas?.[2] ? (imageBytes / Number(quotas[2])) * 100 : null,
+        note: "Live aggregate from Sanity Content Lake. This contributes to the shared asset storage pool.",
+        tone: "neutral",
       },
       {
         label: "File assets",
         value: `${Number(pools[3]).toLocaleString()} · ${pools[4]}`,
-        percent: null,
-        note: "Live aggregate from Sanity Content Lake.",
-        tone: "neutral" as const,
+        percent: fileBytes !== null && quotas?.[2] ? (fileBytes / Number(quotas[2])) * 100 : null,
+        note: "Live aggregate from Sanity Content Lake. This contributes to the shared asset storage pool.",
+        tone: "neutral",
       },
       {
-        label: "Content documents",
-        value: Number(pools[5]).toLocaleString(),
-        percent: null,
-        note: "Current Content Lake document count. Sanity does not expose the plan storage allowance through this query.",
-        tone: "neutral" as const,
+        label: "Document pool",
+        value: quotas?.[5] ? `${Number(quotas[4]).toLocaleString()} / ${Number(quotas[5]).toLocaleString()}` : `${Number(pools[5]).toLocaleString()} / unavailable`,
+        percent: quotas?.[6] ? Number(quotas[6]) : null,
+        note: quotas?.[5]
+          ? "Live Content Lake document count against the configured account allowance."
+          : "Live Content Lake document count; the account allowance is not configured for the collector.",
+        tone: quotas?.[6] ? capacityTone(Number(quotas[6])) : "neutral",
       },
-    ];
+      {
+        label: "Direct API rate window",
+        value: rateWindow ? `${Number(rateWindow[1]).toLocaleString()} / ${Number(rateWindow[2]).toLocaleString()} used` : "Unavailable",
+        percent: rateWindow ? Number(rateWindow[3]) : null,
+        note: rateWindow
+          ? `${Number(rateWindow[4]).toLocaleString()} requests remained in the rate window returned by Sanity.`
+          : "Sanity did not return a verified request-window counter for this collection.",
+        tone: rateWindow ? capacityTone(Number(rateWindow[3])) : "neutral",
+      },
+    );
+    return metrics;
   }
   if (service.id === "supabase-product-limits") {
     const disk = /database disk [^()]+\((\d+)%\)/i.exec(message);
@@ -424,6 +454,20 @@ function productMetrics(service: Service, message: string): Metric[] {
 
 function capacityTone(percent: number): Metric["tone"] {
   return percent >= 95 ? "bad" : percent >= 80 ? "watch" : "good";
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KiB`;
+  if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(2)} MiB`;
+  return `${(bytes / 1024 ** 3).toFixed(2)} GiB`;
+}
+
+function parseByteLabel(value: string): number | null {
+  const match = /^(\d+(?:\.\d+)?)\s*(B|KiB|MiB|GiB)$/.exec(value.trim());
+  if (!match) return null;
+  const factors = { B: 1, KiB: 1024, MiB: 1024 ** 2, GiB: 1024 ** 3 } as const;
+  return Number(match[1]) * factors[match[2] as keyof typeof factors];
 }
 
 function diagnose(
