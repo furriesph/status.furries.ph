@@ -5,9 +5,9 @@
 The repository is prepared for operation; local source and a successful build do not prove production activation. At initial setup there is no configured Git remote.
 
 1. Create or choose the public GitHub repository, configure the remote and publish the reviewed source.
-2. Enable GitHub Actions, review the monitoring workflow and allow `GITHUB_TOKEN` contents-write permission. The workflow publishes data to `status-data`; configure the provider secrets and variables listed below for project monitoring.
+2. Enable GitHub Actions, review the monitoring workflow and allow `GITHUB_TOKEN` contents-write permission. The workflow publishes data to `status-data`; configure the provider secrets and variables listed below for project monitoring. The schedule is owned by the existing `partners-api` Cloudflare Cron Trigger: the organization GitHub App must be installed for this repository with **Actions: Read and write**, so it can dispatch `monitor.yml` at UTC minutes 07, 17, 27, 37, 47 and 57.
 3. Create the Cloudflare Pages project for the static SPA. Build with `pnpm build`; serve `build/client`. The production site reads the public GitHub Contents API for the `status-data` branch and requests raw JSON with its public media type; it does not require a browser token. Set `VITE_FEED_URL=https://raw.githubusercontent.com/OWNER/REPO/status-data/feed.xml` only if a different public RSS mirror is needed. Confirm SPA fallback routing.
-4. Trigger the monitoring workflow manually and inspect collection and history persistence. Deploy the frontend separately through Pages. The schedule requests a run every 10 minutes; GitHub can delay scheduled runs and raw-file CDN caching can add latency.
+4. Trigger the monitoring workflow manually and inspect collection and history persistence. Deploy the frontend separately through Pages. Then inspect the next Cloudflare-Cron-dispatched run; Actions queueing and raw-file CDN caching can add latency.
 5. Open the deployed site, verify current observation timestamps, inspect a service detail and the public JSON output, and check refresh on a nested route if applicable. Verify desktop and mobile layouts.
 6. Configure the `status.furries.ph` domain and DNS through Cloudflare only when authorized. Verify HTTPS and a fresh snapshot from the custom domain.
 7. Observe subsequent scheduled runs and confirm history survives on the `status-data` branch. The frontend reads its configured public URL, so observations update without rebuilding the site. Local development defaults to `/status.json`.
@@ -54,7 +54,7 @@ Published records use valid existing service IDs, UTC timestamps, timestamped pu
 
 ## Investigate stale data or failed deployment
 
-- Check the last successful Actions run and whether scheduled workflows are enabled.
+- Check the last successful Actions run, the Partners API Cron Trigger and the GitHub App installation's `Actions: write` permission for this repository.
 - Check repository write permissions and history persistence steps. Preserve existing history when repairing the pipeline.
 - Check the collector's exit state, DNS/network access and endpoint errors. Do not overwrite failures with synthetic successes.
 - Check the configured public data URLs, branch visibility and CDN caching. If the frontend itself failed to publish, inspect Pages build/deploy logs without copying secrets into issues.

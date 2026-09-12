@@ -1,5 +1,9 @@
 # Progress
 
+## 2026-09-12 - Cloudflare-owned collector cadence
+
+- Removed the GitHub Actions schedule. The existing `partners-api` Cloudflare Worker Cron now dispatches `monitor.yml` six times per hour with a short-lived, repository-scoped organization GitHub App token. The collector still owns provider reads and immutable observation/history publication. The App installation needs `Actions: write` on `furriesph/status.furries.ph`; until that live configuration is verified, stale monitoring remains an honest visible failure state.
+
 ## 2026-09-10
 
 - Initial implementation plan recorded before code changes.

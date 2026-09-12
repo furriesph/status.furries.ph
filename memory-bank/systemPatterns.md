@@ -3,8 +3,8 @@
 - Static SPA frontend with collection performed independently in Node.
 - Declarative service inventory in `config/services.json` and Markdown incident source files in `content/incidents/`. The collector accepts common Markdown extensions, parses constrained front matter and a final `## Updates` section, then validates the generated incident records before publication.
 - Typed snapshot contract in `app/lib/types.ts`.
-- Scheduled GitHub Actions collection writes historical data atomically and publishes the public artifacts to the public `status-data` branch; static frontend deployment is separate and does not repeat for every observation.
-- Thirty-minute freshness threshold and up to 30 days of measured history. The collector schedules every ten minutes; the extra allowance handles normal GitHub Actions queue delay without claiming a stale snapshot is current.
+- Partners API's Cloudflare Cron dispatches the GitHub Actions collector at six fixed UTC minutes per hour. The workflow writes historical data atomically and publishes the public artifacts to the public `status-data` branch; static frontend deployment is separate and does not repeat for every observation.
+- Thirty-minute freshness threshold and up to 30 days of measured history. The collector runs every ten minutes; the extra allowance handles Cloudflare delivery, Actions queueing and CDN delay without claiming a stale snapshot is current.
 - Snapshot v2: HTTP, Supabase query/auth/capacity, Cloudflare account analytics, provider incident feeds, reviewed platform reads, operational counts/receipts, media and lifecycle probes. Missing or expired evidence is Unknown; declared dependency failures propagate without certifying workflows.
 - Incidents have stable IDs, affected service IDs and timestamped public-safe updates. Operator Markdown records are merged with every incident exposed by the Supabase/Cloudflare public summary feeds; generated records stay scoped to their provider component, exclude raw provider payload bodies and persist as resolved history after a successful later feed no longer lists them.
 

@@ -29,6 +29,10 @@ Detect Supabase database issues, Cloudflare incidents, API/request limits and up
 
 ## Progress log
 
+### 2026-09-12 - Cloudflare-owned production cadence
+
+GitHub's internal schedule is removed. The existing Partners API Cloudflare Cron dispatches the collector six times per hour using an organization GitHub App installation token restricted to this repository and `Actions: write`. The installation permission remains a live configuration check before dispatch is certified; no status evidence is fabricated while it is absent.
+
 ### 2026-09-10
 
 Plan recorded in docs/provider-monitoring-plan.md. Server-only checks and v2 semantics implemented. Supabase query/auth/capacity and public provider feeds verified live locally; Cloudflare account token is absent, so account checks report degraded monitoring rather than fabricated success. Heartbeat inputs have an explicit local file contract; the workflow has no heartbeat file producer. Production Actions, hosting and DNS are not established by this task's source changes.
