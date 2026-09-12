@@ -78,6 +78,61 @@ export async function probeCloudflare(
     if (!body.data?.viewer) throw new Error("analytics");
     return body.data.viewer;
   }
+  async function telemetryEvents(start, end) {
+    const response = await fetchImpl(
+      `${API}/accounts/${encodeURIComponent(env.CLOUDFLARE_ACCOUNT_ID)}/workers/observability/telemetry/query`,
+      {
+        method: "POST",
+        redirect: "error",
+        signal: controller.signal,
+        headers: {
+          authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          queryId: "status-page-observability-events",
+          timeframe: { from: start, to: end },
+          chartType: "aggregate",
+          ignoreSeries: true,
+          dry: true,
+          parameters: { calculations: [{ operator: "count", alias: "events" }] },
+        }),
+      },
+    );
+    if (!response.ok) {
+      await response.body?.cancel();
+      throw new Error("telemetry");
+    }
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error("telemetry");
+    let size = 0;
+    const chunks = [];
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > 256_000) throw new Error("telemetry");
+        chunks.push(value);
+      }
+    } finally {
+      await reader.cancel().catch(() => {});
+    }
+    let body;
+    try {
+      body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    } catch {
+      throw new Error("telemetry");
+    }
+    if (body?.success !== true || !Array.isArray(body?.result?.calculations))
+      throw new Error("telemetry");
+    const aggregate = body.result.calculations
+      .flatMap((calculation) => calculation?.aggregates ?? [])
+      .find((candidate) => number(candidate?.value) || number(candidate?.count));
+    const total = aggregate?.value ?? aggregate?.count;
+    if (!number(total)) throw new Error("telemetry");
+    return total;
+  }
   async function liveAccountInventory() {
     const paths = [
       ["Worker scripts", "workers/scripts?per_page=100"],
@@ -232,8 +287,16 @@ export async function probeCloudflare(
       details.push(`Cloudflare Worker requests today: ${dayUsage.requests} (analytics estimate; account quota is not configured).`);
     }
     details.push(`Cloudflare Worker CPU time today: ${Math.round(dayUsage.cpuTimeUs / 1000)} ms (analytics estimate).`);
-    if (observabilityDaily)
-      details.push(`Cloudflare dashboard Observability events today: unavailable / ${Number(observabilityDaily)}; the collector credential lacks Cloudflare's required Workers Observability Write permission for telemetry queries, so event use is not estimated.`);
+    if (observabilityDaily) {
+      try {
+        const observedEvents = await telemetryEvents(startOfDay, date.getTime());
+        details.push(`Cloudflare dashboard Observability events today: ${observedEvents} / ${Number(observabilityDaily)} (live telemetry query).`);
+        if (observedEvents >= Number(observabilityDaily) * 0.8)
+          warnings.push(`Daily Observability event usage ${observedEvents >= Number(observabilityDaily) ? "has reached" : "is approaching"} the account quota.`);
+      } catch {
+        details.push(`Cloudflare dashboard Observability events today: unavailable / ${Number(observabilityDaily)}; no verified event total was returned by the account telemetry query.`);
+      }
+    }
     if (buildMinutesMonthly)
       details.push(`Cloudflare dashboard Workers build minutes this month: unavailable / ${Number(buildMinutesMonthly)}; the current Cloudflare analytics API credential does not expose build-minute use.`);
     try {
@@ -310,7 +373,9 @@ export async function probeCloudflare(
     }
     if (warnings.length)
       return result("degraded", [...warnings, ...details, ...gaps].join(" "));
-    if (gaps.length) return gap([...gaps, ...details].join(" "));
+    // Account-wide quota telemetry remains useful even when a supplemental zone or product meter is unavailable.
+    if (gaps.length)
+      details.push(`Additional monitoring detail: ${gaps.join(" ")}`);
     return result(
       "operational",
       `Account request usage is below configured warning levels. ${details.join(" ")} Analytics are sampled estimates, not billing totals.`,

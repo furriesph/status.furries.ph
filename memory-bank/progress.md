@@ -1,3 +1,7 @@
+## 2026-09-13 - Correct Cloudflare account telemetry
+
+- Replaced the collector's Cloudflare account and zone configuration with the active production account. Account telemetry now reports live Workers, Pages and storage inventory. The request-limits service stays known when a supplemental optional meter is unavailable; Workers Observability aggregates are queried through Cloudflare's required write-scoped API and shown only when a verified total is returned.
+
 # Progress
 
 ## 2026-09-12 - Cloudflare-owned collector cadence

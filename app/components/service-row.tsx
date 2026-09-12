@@ -326,7 +326,7 @@ function productMetrics(service: Service, message: string): Metric[] {
   if (service.id === "request-limits") {
     const daily = /Cloudflare dashboard Worker requests today:\s*(\d+)\s*\/\s*(\d+)/i.exec(message);
     const cpuTime = /Cloudflare Worker CPU time today:\s*(\d+) ms/i.exec(message);
-    const observability = /Cloudflare dashboard Observability events today:\s*unavailable\s*\/\s*(\d+)/i.exec(message);
+    const observability = /Cloudflare dashboard Observability events today:\s*(?:(\d+)\s*\/\s*|unavailable\s*\/\s*)(\d+)/i.exec(message);
     const buildMinutes = /Cloudflare dashboard Workers build minutes this month:\s*unavailable\s*\/\s*(\d+)/i.exec(message);
     const zone = /Last 15 minutes across the zone:\s*(\d+) responses,\s*(\d+) HTTP 429,\s*(\d+) HTTP 5xx/i.exec(message);
     const inventory = /Live Cloudflare account inventory:\s*(\d+) Worker scripts,\s*(\d+) Pages projects,\s*(\d+) KV namespaces,\s*(\d+) R2 buckets and\s*(\d+) Durable Object namespaces;\s*(\d+) D1 databases and\s*(\d+) Queues/i.exec(message);
@@ -347,10 +347,18 @@ function productMetrics(service: Service, message: string): Metric[] {
       },
       observability && {
         label: "Observability events today",
-        value: `Unavailable / ${Number(observability[1]).toLocaleString()}`,
-        percent: null,
-        note: "The account allowance is known. Cloudflare requires its Workers Observability Write-labelled permission for telemetry queries; this collector does not have it.",
-        tone: "neutral" as const,
+        value: observability[1]
+          ? `${Number(observability[1]).toLocaleString()} / ${Number(observability[2]).toLocaleString()}`
+          : `Unavailable / ${Number(observability[2]).toLocaleString()}`,
+        percent: observability[1]
+          ? (Number(observability[1]) / Number(observability[2])) * 100
+          : null,
+        note: observability[1]
+          ? "Live account telemetry event total."
+          : "The account allowance is known, but this collection did not receive a verified telemetry event total.",
+        tone: observability[1]
+          ? capacityTone((Number(observability[1]) / Number(observability[2])) * 100)
+          : ("neutral" as const),
       },
       buildMinutes && {
         label: "Workers build minutes this month",

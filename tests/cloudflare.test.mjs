@@ -175,7 +175,7 @@ test("Local auth rejects CI and sanitizes subprocess failures", async () => {
       error.message.includes("could not be read"),
   );
 });
-test("Daily usage uses one bounded query and missing zone remains a gap", async () => {
+test("Daily usage remains known when the optional zone sample is not configured", async () => {
   const windows = [];
   const result = await probeCloudflare(
     { id: "limits", check: { kind: "cloudflare", target: "requests" } },
@@ -191,8 +191,51 @@ test("Daily usage uses one bounded query and missing zone remains a gap", async 
     },
   );
   assert.equal(windows.length, 1);
-  assert.equal(result.evidence, "monitoring-gap");
+  assert.equal(result.status, "operational");
+  assert.equal(result.evidence, "direct");
+  assert.match(result.message, /Zone response-code monitoring is not configured/);
 });
+test("Observability event usage uses a bounded account telemetry query", async () => {
+  const result = await probeCloudflare(
+    { id: "limits", check: { kind: "cloudflare", target: "requests" } },
+    {
+      env: {
+        ...env,
+        CLOUDFLARE_DAILY_REQUEST_LIMIT: "10000",
+        CLOUDFLARE_DAILY_OBSERVABILITY_LIMIT: "200000",
+        CLOUDFLARE_ZONE_ID: "zone",
+      },
+      now,
+      fetchImpl: async (url, options) => {
+        if (options.method === "GET") return inventoryResponse(url);
+        if (String(url).includes("observability/telemetry/query"))
+          return Response.json({
+            success: true,
+            result: { calculations: [{ aggregates: [{ value: 11662 }] }] },
+          });
+        return JSON.parse(options.body).query.includes("MonitorZone")
+          ? Response.json({
+              data: {
+                viewer: {
+                  zones: [
+                    {
+                      httpRequestsAdaptiveGroups: [
+                        { count: 20, dimensions: { edgeResponseStatus: 200 } },
+                      ],
+                    },
+                  ],
+                },
+              },
+            })
+          : response([row("success", 100)]);
+      },
+    },
+  );
+  assert.equal(result.status, "operational");
+  assert.match(result.message, /11662 \/ 200000/);
+  assert.match(result.message, /live telemetry query/);
+});
+
 test("Healthy quotas need configured budgets and recent valid zone data", async () => {
   const result = await probeCloudflare(
     { id: "limits", check: { kind: "cloudflare", target: "requests" } },
