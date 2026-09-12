@@ -188,7 +188,7 @@
     "id": "sanity-media-pools",
     "name": "Sanity media pools",
     "group": "Infrastructure",
-    "description": "Content Lake image and file assets, stored media bytes and document count.",
+    "description": "Content Lake image and file assets, stored media bytes and document count; verified plan allowances appear when configured.",
     "check": {
       "kind": "sanity",
       "target": "media-pools"
