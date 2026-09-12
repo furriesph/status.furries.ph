@@ -12,9 +12,9 @@ const service = {
   id: "worker",
   check: { kind: "cloudflare", target: "workers" },
 };
-const row = (status = "success", requests = 100, errors = 0) => ({
+const row = (status = "success", requests = 100, errors = 0, cpuTimeUs = 50_000) => ({
   dimensions: { status },
-  sum: { requests, errors, subrequests: 200 },
+  sum: { requests, errors, subrequests: 200, cpuTimeUs },
 });
 const response = (rows) =>
   Response.json({
@@ -133,6 +133,7 @@ test("Request budget scope is account-wide and zone 429 detects throttling", asy
   assert.match(result.message, /429/);
   assert.match(result.message, /90 \/ 100/);
   assert.match(result.message, /2 HTTP 429/);
+  assert.match(result.message, /45 ms/);
   assert.equal(calls[0].variables.script, undefined);
   assert.doesNotMatch(calls[0].query, /scriptName/);
 });

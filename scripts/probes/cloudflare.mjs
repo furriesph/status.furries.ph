@@ -137,7 +137,7 @@ export async function probeCloudflare(
       `query Monitor($account: string, $start: string, $end: string${scoped ? ", $script: string" : ""}) {
       viewer { accounts(filter: {accountTag: $account}) {
         workersInvocationsAdaptive(limit: 100, filter: {datetime_geq: $start, datetime_lt: $end${scoped ? ", scriptName: $script" : ""}}) {
-          dimensions { status } sum { requests errors subrequests }
+          dimensions { status } sum { requests errors subrequests cpuTimeUs }
         }
       }}
     }`,
