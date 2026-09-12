@@ -215,8 +215,9 @@ function serviceMetrics(
       note: "Recorded checks only; this is not continuous uptime.",
       tone: success >= 99 ? "good" : success >= 95 ? "watch" : "bad",
     });
-  metrics.push(...productMetrics(service, observation?.message ?? ""));
-  if (observation)
+  const products = productMetrics(service, observation?.message ?? "");
+  metrics.push(...products);
+  if (observation && products.length === 0)
     metrics.push({
       label: "Observed evidence",
       value: labels[observation.status],
