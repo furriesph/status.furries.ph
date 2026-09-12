@@ -111,10 +111,6 @@ export function ServiceRow({
           <span className="diagnostic-kicker"><Stethoscope size={14} /> Diagnosis</span>
           <dl>
             <div>
-              <dt>Observed evidence</dt>
-              <dd>{diagnosis.evidence}</dd>
-            </div>
-            <div>
               <dt>Possible causes</dt>
               <dd>{diagnosis.causes}</dd>
             </div>
@@ -220,6 +216,19 @@ function serviceMetrics(
       tone: success >= 99 ? "good" : success >= 95 ? "watch" : "bad",
     });
   metrics.push(...productMetrics(service, observation?.message ?? ""));
+  if (observation)
+    metrics.push({
+      label: "Observed evidence",
+      value: labels[observation.status],
+      percent: null,
+      note: observation.message,
+      tone:
+        observation.status === "operational"
+          ? "good"
+          : observation.status === "degraded" || observation.status === "outage"
+            ? "bad"
+            : "neutral",
+    });
   return metrics;
 }
 
