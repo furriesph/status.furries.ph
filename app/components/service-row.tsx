@@ -230,6 +230,8 @@ function productMetrics(service: Service, message: string): Metric[] {
     const pooler = /(\d+)\s*\/\s*(\d+) pooler client connections/i.exec(message);
     const authUsers = /(\d+) Auth users/i.exec(message);
     const realtime = /(\d+) active Realtime subscriptions/i.exec(message);
+    const requests = /latest (\d+) one-minute samples:\s*Auth (\d+);\s*Realtime (\d+);\s*REST (\d+);\s*Storage (\d+)/i.exec(message);
+    const authLimits = /Current Auth rate limits per configured rolling hour:\s*anonymous users (\d+);\s*email sends (\d+);\s*SMS sends (\d+);\s*token refreshes (\d+);\s*verification attempts (\d+);\s*OTP requests (\d+);\s*Web3 requests (\d+)/i.exec(message);
     return [
       disk && {
         label: "Database disk",
@@ -266,6 +268,32 @@ function productMetrics(service: Service, message: string): Metric[] {
         note: "Live active subscriptions. A plan allowance is unavailable to the collector.",
         tone: "neutral" as const,
       },
+      requests && {
+        label: "API activity · latest minute samples",
+        value: `${requests[1]} samples`,
+        percent: null,
+        note: `Auth ${Number(requests[2]).toLocaleString()} · Realtime ${Number(requests[3]).toLocaleString()} · REST ${Number(requests[4]).toLocaleString()} · Storage ${Number(requests[5]).toLocaleString()} requests. These are observed activity totals, not plan allowances.`,
+        tone: "neutral" as const,
+      },
+      ...(
+        authLimits
+          ? [
+              ["Anonymous users", authLimits[1]],
+              ["Email sends", authLimits[2]],
+              ["SMS sends", authLimits[3]],
+              ["Token refreshes", authLimits[4]],
+              ["Verification attempts", authLimits[5]],
+              ["OTP requests", authLimits[6]],
+              ["Web3 requests", authLimits[7]],
+            ].map(([label, limit]) => ({
+              label: `Auth rate limit · ${label}`,
+              value: `${Number(limit).toLocaleString()} / hour`,
+              percent: null,
+              note: "Current configured Supabase Auth rolling-hour limit. Usage inside this window is not exposed by the provider API.",
+              tone: "neutral" as const,
+            }))
+          : []
+      ),
     ].filter(Boolean) as Metric[];
   }
   if (service.id === "request-limits") {

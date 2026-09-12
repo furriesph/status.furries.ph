@@ -102,8 +102,52 @@ test("product limits publish live product capacity without inventing billing all
   assert.match(result.message, /42 Auth users/);
   assert.match(result.message, /3 active Realtime subscriptions/);
   assert.match(result.message, /7 \/ 200 pooler client connections/);
-  assert.match(result.message, /require a separate Management API billing credential/);
+  assert.match(result.message, /separate management analytics credential is required/);
   assert.doesNotMatch(JSON.stringify(result), /PRIVATE/);
+});
+test("product limits include verified Management API activity and configured Auth limits", async () => {
+  const management = {
+    ...env,
+    SUPABASE_MANAGEMENT_TOKEN: "MANAGEMENT_PRIVATE",
+    SUPABASE_PROJECT_REF: "abcdefghijklmnopqrst",
+  };
+  const result = await probe("limits", productMetrics(), 200, {
+    env: management,
+    fetchImpl: async (url, init) => {
+      const endpoint = new URL(url);
+      if (endpoint.hostname === "example.supabase.co")
+        return new Response(productMetrics());
+      assert.equal(endpoint.hostname, "api.supabase.com");
+      assert.equal(init.headers.authorization, "Bearer MANAGEMENT_PRIVATE");
+      if (endpoint.pathname.endsWith("/usage.api-counts"))
+        return Response.json({
+          result: [
+            {
+              timestamp: "2026-09-12T00:00:00Z",
+              total_auth_requests: 1,
+              total_realtime_requests: 2,
+              total_rest_requests: 3,
+              total_storage_requests: 4,
+            },
+          ],
+        });
+      if (endpoint.pathname.endsWith("/config/auth"))
+        return Response.json({
+          rate_limit_anonymous_users: 30,
+          rate_limit_email_sent: 150,
+          rate_limit_sms_sent: 30,
+          rate_limit_token_refresh: 150,
+          rate_limit_verify: 30,
+          rate_limit_otp: 30,
+          rate_limit_web3: 30,
+        });
+      throw Error(`Unexpected Management API request: ${endpoint.pathname}`);
+    },
+  });
+  assert.equal(result.status, "operational");
+  assert.match(result.message, /latest 1 one-minute samples: Auth 1; Realtime 2; REST 3; Storage 4/);
+  assert.match(result.message, /anonymous users 30; email sends 150; SMS sends 30/);
+  assert.doesNotMatch(JSON.stringify(result), /MANAGEMENT_PRIVATE/);
 });
 test("product limits degrade with the same 80% capacity threshold", async () => {
   const result = await probe("limits", productMetrics().replace(" 20\n", " 80\n"));

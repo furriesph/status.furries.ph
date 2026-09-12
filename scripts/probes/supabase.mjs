@@ -123,6 +123,51 @@ function capacity(text) {
   };
 }
 
+function managementProjectRef(env) {
+  const ref = env.SUPABASE_PROJECT_REF;
+  return typeof ref === "string" && /^[a-z0-9]{20}$/i.test(ref) ? ref : null;
+}
+
+function managementUsage(value) {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 60) return null;
+  const totals = { auth: 0, realtime: 0, rest: 0, storage: 0 };
+  for (const sample of value) {
+    if (!sample || typeof sample.timestamp !== "string") return null;
+    const fields = [
+      ["total_auth_requests", "auth"],
+      ["total_realtime_requests", "realtime"],
+      ["total_rest_requests", "rest"],
+      ["total_storage_requests", "storage"],
+    ];
+    for (const [field, total] of fields) {
+      if (!Number.isSafeInteger(sample[field]) || sample[field] < 0) return null;
+      totals[total] += sample[field];
+    }
+  }
+  return { ...totals, samples: value.length };
+}
+
+const AUTH_RATE_LIMITS = [
+  ["rate_limit_anonymous_users", "anonymous users"],
+  ["rate_limit_email_sent", "email sends"],
+  ["rate_limit_sms_sent", "SMS sends"],
+  ["rate_limit_token_refresh", "token refreshes"],
+  ["rate_limit_verify", "verification attempts"],
+  ["rate_limit_otp", "OTP requests"],
+  ["rate_limit_web3", "Web3 requests"],
+];
+
+function authRateLimits(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const limits = [];
+  for (const [key, label] of AUTH_RATE_LIMITS) {
+    const amount = value[key];
+    if (!Number.isSafeInteger(amount) || amount < 0) return null;
+    limits.push({ label, amount });
+  }
+  return limits;
+}
+
 export async function probeSupabase(
   service,
   {
@@ -180,6 +225,25 @@ export async function probeSupabase(
         };
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  async function management(path) {
+    const token = env.SUPABASE_MANAGEMENT_TOKEN;
+    const projectRef = managementProjectRef(env);
+    if (!token || !projectRef) throw new Error("management configuration");
+    const response = await fetchImpl(
+      `https://api.supabase.com/v1/projects/${projectRef}${path}`,
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}` },
+        redirect: "error",
+        signal: controller.signal,
+      },
+    );
+    if (!response.ok) {
+      await response.body?.cancel();
+      throw new Error("management request");
+    }
+    return JSON.parse(await boundedText(response));
+  }
   try {
     const response = await fetchImpl(new URL(paths[target], origin), {
       method: "GET",
@@ -215,11 +279,26 @@ export async function probeSupabase(
           if (value < 1024 ** 3) return `${(value / 1024 ** 2).toFixed(1)} MiB`;
           return `${(value / 1024 ** 3).toFixed(2)} GiB`;
         };
+        let managementSummary =
+          "Management API request usage and Auth rate-limit configuration are unavailable; a separate management analytics credential is required.";
+        try {
+          const [usageResponse, authConfig] = await Promise.all([
+            management("/analytics/endpoints/usage.api-counts"),
+            management("/config/auth"),
+          ]);
+          const usageTotals = managementUsage(usageResponse?.result);
+          const rateLimits = authRateLimits(authConfig);
+          if (!usageTotals || !rateLimits) throw new Error("management response");
+          managementSummary = `Supabase Management API requests across the latest ${usageTotals.samples} one-minute samples: Auth ${usageTotals.auth}; Realtime ${usageTotals.realtime}; REST ${usageTotals.rest}; Storage ${usageTotals.storage}. Current Auth rate limits per configured rolling hour: ${rateLimits.map(({ label, amount }) => `${label} ${amount}`).join("; ")}.`;
+        } catch {
+          // The direct product metrics stay useful when optional management
+          // analytics are denied or unavailable; no usage is fabricated.
+        }
         return result(
           usage.connections >= 0.8 || usage.disk >= 0.8
             ? "degraded"
             : "operational",
-          `Live Supabase product limits: database disk ${formatBytes(usage.diskUsage.used)} / ${formatBytes(usage.diskUsage.limit)} (${Math.round(usage.disk * 100)}%); busiest database connection pool ${Math.round(usage.connection.used)} / ${Math.round(usage.connection.limit)} (${Math.round(usage.connections * 100)}%); ${Math.round(usage.authUsers)} Auth users; ${Math.round(usage.realtimeSubscriptions)} active Realtime subscriptions; ${Math.round(usage.poolerActiveClients)} / ${Math.round(usage.poolerClientLimit)} pooler client connections. Organization plan allowances, MAU, egress and Storage billing usage require a separate Management API billing credential and are not inferred.`,
+          `Live Supabase product limits: database disk ${formatBytes(usage.diskUsage.used)} / ${formatBytes(usage.diskUsage.limit)} (${Math.round(usage.disk * 100)}%); busiest database connection pool ${Math.round(usage.connection.used)} / ${Math.round(usage.connection.limit)} (${Math.round(usage.connections * 100)}%); ${Math.round(usage.authUsers)} Auth users; ${Math.round(usage.realtimeSubscriptions)} active Realtime subscriptions; ${Math.round(usage.poolerActiveClients)} / ${Math.round(usage.poolerClientLimit)} pooler client connections. ${managementSummary} Organization plan allowances, MAU, egress and Storage billing usage are not inferred.`,
         );
       }
       const resource =
