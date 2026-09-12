@@ -4,7 +4,6 @@
 const ENDPOINT = "https://api.cloudflare.com/client/v4/graphql";
 const API = "https://api.cloudflare.com/client/v4";
 const DAY = 86_400_000;
-const STANDARD_INCLUDED_REQUESTS_PER_MONTH = 10_000_000;
 const number = (value) =>
   typeof value === "number" && Number.isFinite(value) && value >= 0;
 
@@ -78,46 +77,6 @@ export async function probeCloudflare(
       throw new Error("analytics");
     if (!body.data?.viewer) throw new Error("analytics");
     return body.data.viewer;
-  }
-  async function liveWorkerUsageModel() {
-    if (!env.CLOUDFLARE_WORKER_NAME) return null;
-    const response = await fetchImpl(
-      `${API}/accounts/${encodeURIComponent(env.CLOUDFLARE_ACCOUNT_ID)}/workers/scripts/${encodeURIComponent(env.CLOUDFLARE_WORKER_NAME)}/settings`,
-      {
-        method: "GET",
-        redirect: "error",
-        signal: controller.signal,
-        headers: { authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}` },
-      },
-    );
-    if (!response.ok) {
-      await response.body?.cancel();
-      return null;
-    }
-    const reader = response.body?.getReader();
-    if (!reader) return null;
-    let size = 0;
-    const chunks = [];
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        size += value.byteLength;
-        if (size > 64_000) return null;
-        chunks.push(value);
-      }
-    } finally {
-      await reader.cancel().catch(() => {});
-    }
-    const text = Buffer.concat(chunks).toString("utf8");
-    try {
-      const body = JSON.parse(text);
-      return body?.success === true && typeof body.result?.usage_model === "string"
-        ? body.result.usage_model
-        : null;
-    } catch {
-      return null;
-    }
   }
   async function liveAccountInventory() {
     const paths = [
@@ -195,7 +154,8 @@ export async function probeCloudflare(
       throw new Error("analytics");
     let requests = 0,
       errors = 0,
-      resources = 0;
+      resources = 0,
+      cpuTimeUs = 0;
     for (const row of rows) {
       if (
         !number(row.sum?.requests) ||
@@ -206,6 +166,7 @@ export async function probeCloudflare(
       )
         throw new Error("analytics");
       requests += row.sum.requests;
+      if (number(row.sum?.cpuTimeUs)) cpuTimeUs += row.sum.cpuTimeUs;
       const status = row.dimensions.status;
       errors += ["success", "clientDisconnected"].includes(status)
         ? row.sum.errors
@@ -213,7 +174,7 @@ export async function probeCloudflare(
       if (/exceeded|limit|memory|cpu/i.test(status))
         resources += row.sum.requests;
     }
-    return { requests, errors, resources };
+    return { requests, errors, resources, cpuTimeUs };
   }
   try {
     if (service.check?.target === "workers") {
@@ -239,9 +200,10 @@ export async function probeCloudflare(
       );
     }
     const daily = env.CLOUDFLARE_DAILY_REQUEST_LIMIT;
-    let monthly = env.CLOUDFLARE_MONTHLY_REQUEST_LIMIT;
+    const observabilityDaily = env.CLOUDFLARE_DAILY_OBSERVABILITY_LIMIT;
+    const buildMinutesMonthly = env.CLOUDFLARE_MONTHLY_BUILD_MINUTES_LIMIT;
     if (
-      ![daily, monthly]
+      ![daily, observabilityDaily, buildMinutesMonthly]
         .filter(Boolean)
         .every(
           (value) =>
@@ -256,65 +218,24 @@ export async function probeCloudflare(
     const details = [],
       warnings = [],
       gaps = [];
-    let monthlySource = monthly ? "configured operating budget" : null;
-    if (!monthly) {
-      const usageModel = await liveWorkerUsageModel();
-      if (usageModel === "standard") {
-        monthly = String(STANDARD_INCLUDED_REQUESTS_PER_MONTH);
-        monthlySource = "live Workers Standard included allotment";
-      } else if (usageModel) {
-        gaps.push(
-          "The live Worker usage model has no reviewed included-request allotment mapping.",
-        );
-      } else {
-        gaps.push(
-          "Live Worker plan information is unavailable; request budget could not be derived.",
-        );
-      }
-    }
-    const windows = [
-      [
-        "Daily",
-        daily,
-        Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
-      ],
-      [
-        "Monthly",
-        monthly,
-        Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1),
-      ],
-    ];
-    for (const [period, limit, start] of windows) {
-      if (period === "Daily" && !limit) {
-        const usage = await workers(start, date.getTime(), false);
-        details.push(
-          `Daily account Worker requests: ${usage.requests}; live Workers Standard has no Cloudflare daily hard request limit (analytics estimate).`,
-        );
-        continue;
-      }
-      if (!limit) continue;
-      let total = 0;
-      // Query increments stay within the documented maximum one-week query span.
-      for (let cursor = start; cursor < date.getTime(); cursor += 7 * DAY) {
-        total += (
-          await workers(
-            cursor,
-            Math.min(cursor + 7 * DAY, date.getTime()),
-            false,
-          )
-        ).requests;
-      }
-      if (start === date.getTime())
-        gaps.push(`${period} usage window has no observations yet.`);
-      const source = period === "Monthly" ? monthlySource : "configured operating budget";
+    const startOfDay = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    const dayUsage = await workers(startOfDay, date.getTime(), false);
+    if (daily) {
       details.push(
-        `${period} account requests: ${total} / ${Number(limit)} ${source}; ${Math.max(0, Number(limit) - total)} remaining (analytics estimates).`,
+        `Cloudflare dashboard Worker requests today: ${dayUsage.requests} / ${Number(daily)} (analytics estimate; account quota).`,
       );
-      if (total >= Number(limit) * 0.8)
+      if (dayUsage.requests >= Number(daily) * 0.8)
         warnings.push(
-          `${period} account request usage ${total >= Number(limit) ? "has reached" : "is approaching"} its configured budget (analytics estimate).`,
+          `Daily Worker request usage ${dayUsage.requests >= Number(daily) ? "has reached" : "is approaching"} the account quota (analytics estimate).`,
         );
+    } else {
+      details.push(`Cloudflare Worker requests today: ${dayUsage.requests} (analytics estimate; account quota is not configured).`);
     }
+    details.push(`Cloudflare Worker CPU time today: ${Math.round(dayUsage.cpuTimeUs / 1000)} ms (analytics estimate).`);
+    if (observabilityDaily)
+      details.push(`Cloudflare dashboard Observability events today: unavailable / ${Number(observabilityDaily)}; the collector credential is denied Workers Observability read access, so event use is not estimated.`);
+    if (buildMinutesMonthly)
+      details.push(`Cloudflare dashboard Workers build minutes this month: unavailable / ${Number(buildMinutesMonthly)}; the current Cloudflare analytics API credential does not expose build-minute use.`);
     try {
       const inventory = await liveAccountInventory();
       const count = (label) => inventory.find((item) => item.label === label).count;
@@ -322,7 +243,7 @@ export async function probeCloudflare(
         `Live Cloudflare account inventory: ${count("Worker scripts")} Worker scripts, ${count("Pages projects")} Pages projects, ${count("KV namespaces")} KV namespaces, ${count("R2 buckets")} R2 buckets and ${count("Durable Object namespaces")} Durable Object namespaces; ${count("D1 databases")} D1 databases and ${count("Queues")} Queues.`,
       );
       details.push(
-        "Daily limit scope for active products: Pages Functions share Workers Standard (no daily request cap); static Pages assets are free and unlimited. Paid KV has no daily hard operation cap (monthly included usage); R2 has monthly free usage, not a daily quota; paid Durable Objects have monthly included usage, not a daily quota. Product billing usage is unavailable to this read-only collector.",
+        "Daily limit scope for active products: static Pages assets are free and unlimited. Product billing usage is unavailable to this collector; account dashboard quotas are published only when explicitly configured from the account plan.",
       );
     } catch {
       gaps.push(

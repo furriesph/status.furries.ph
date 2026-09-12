@@ -269,23 +269,39 @@ function productMetrics(service: Service, message: string): Metric[] {
     ].filter(Boolean) as Metric[];
   }
   if (service.id === "request-limits") {
-    const monthly = /Monthly account requests:\s*(\d+)\s*\/\s*(\d+)/i.exec(message);
-    const daily = /Daily account Worker requests:\s*(\d+)/i.exec(message);
+    const daily = /Cloudflare dashboard Worker requests today:\s*(\d+)\s*\/\s*(\d+)/i.exec(message);
+    const cpuTime = /Cloudflare Worker CPU time today:\s*(\d+) ms/i.exec(message);
+    const observability = /Cloudflare dashboard Observability events today:\s*unavailable\s*\/\s*(\d+)/i.exec(message);
+    const buildMinutes = /Cloudflare dashboard Workers build minutes this month:\s*unavailable\s*\/\s*(\d+)/i.exec(message);
     const zone = /Last 15 minutes across the zone:\s*(\d+) responses,\s*(\d+) HTTP 429,\s*(\d+) HTTP 5xx/i.exec(message);
     const inventory = /Live Cloudflare account inventory:\s*(\d+) Worker scripts,\s*(\d+) Pages projects,\s*(\d+) KV namespaces,\s*(\d+) R2 buckets and\s*(\d+) Durable Object namespaces;\s*(\d+) D1 databases and\s*(\d+) Queues/i.exec(message);
     return [
-      monthly && {
-        label: "Workers Standard monthly inclusion",
-        value: `${Number(monthly[1]).toLocaleString()} / ${Number(monthly[2]).toLocaleString()} requests`,
-        percent: (Number(monthly[1]) / Number(monthly[2])) * 100,
-        note: "Included-use threshold. Standard has no daily hard request cap.",
-        tone: capacityTone((Number(monthly[1]) / Number(monthly[2])) * 100),
-      },
       daily && {
         label: "Worker requests today",
-        value: Number(daily[1]).toLocaleString(),
+        value: `${Number(daily[1]).toLocaleString()} / ${Number(daily[2]).toLocaleString()}`,
+        percent: (Number(daily[1]) / Number(daily[2])) * 100,
+        note: "Live account-wide analytics against the dashboard's daily Workers allowance.",
+        tone: capacityTone((Number(daily[1]) / Number(daily[2])) * 100),
+      },
+      cpuTime && {
+        label: "Worker CPU time today",
+        value: `${Number(cpuTime[1]).toLocaleString()} ms`,
         percent: null,
-        note: "Observed UTC-day use. No Cloudflare daily hard request cap on Workers Standard.",
+        note: "Live account-wide execution CPU time from Workers analytics.",
+        tone: "neutral" as const,
+      },
+      observability && {
+        label: "Observability events today",
+        value: `Unavailable / ${Number(observability[1]).toLocaleString()}`,
+        percent: null,
+        note: "The account allowance is known. Cloudflare denied this collector the Observability-read scope required for its live count.",
+        tone: "neutral" as const,
+      },
+      buildMinutes && {
+        label: "Workers build minutes this month",
+        value: `Unavailable / ${Number(buildMinutes[1]).toLocaleString()}`,
+        percent: null,
+        note: "The account allowance is known. The permitted analytics API does not expose current build-minute use.",
         tone: "neutral" as const,
       },
       zone && {

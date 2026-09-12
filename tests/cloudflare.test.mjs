@@ -103,7 +103,6 @@ test("Request budget scope is account-wide and zone 429 detects throttling", asy
       env: {
         ...env,
         CLOUDFLARE_DAILY_REQUEST_LIMIT: "100",
-        CLOUDFLARE_MONTHLY_REQUEST_LIMIT: "10000",
         CLOUDFLARE_ZONE_ID: "zone",
       },
       now,
@@ -133,7 +132,6 @@ test("Request budget scope is account-wide and zone 429 detects throttling", asy
   assert.match(result.message, /approaching/);
   assert.match(result.message, /429/);
   assert.match(result.message, /90 \/ 100/);
-  assert.match(result.message, /10 remaining/);
   assert.match(result.message, /2 HTTP 429/);
   assert.equal(calls[0].variables.script, undefined);
   assert.doesNotMatch(calls[0].query, /scriptName/);
@@ -176,12 +174,12 @@ test("Local auth rejects CI and sanitizes subprocess failures", async () => {
       error.message.includes("could not be read"),
   );
 });
-test("Monthly queries use bounded non-overlapping windows and missing zone remains a gap", async () => {
+test("Daily usage uses one bounded query and missing zone remains a gap", async () => {
   const windows = [];
   const result = await probeCloudflare(
     { id: "limits", check: { kind: "cloudflare", target: "requests" } },
     {
-      env: { ...env, CLOUDFLARE_MONTHLY_REQUEST_LIMIT: "10000" },
+      env: { ...env, CLOUDFLARE_DAILY_REQUEST_LIMIT: "10000" },
       now,
       fetchImpl: async (_, options) => {
         if (options.method === "GET") return inventoryResponse(_);
@@ -191,8 +189,7 @@ test("Monthly queries use bounded non-overlapping windows and missing zone remai
       },
     },
   );
-  assert.equal(windows.length, 3);
-  assert.equal(windows[1].end, windows[2].start);
+  assert.equal(windows.length, 1);
   assert.equal(result.evidence, "monitoring-gap");
 });
 test("Healthy quotas need configured budgets and recent valid zone data", async () => {
@@ -202,7 +199,6 @@ test("Healthy quotas need configured budgets and recent valid zone data", async 
       env: {
         ...env,
         CLOUDFLARE_DAILY_REQUEST_LIMIT: "10000",
-        CLOUDFLARE_MONTHLY_REQUEST_LIMIT: "10000",
         CLOUDFLARE_ZONE_ID: "zone",
       },
       now,
@@ -228,15 +224,13 @@ test("Healthy quotas need configured budgets and recent valid zone data", async 
   );
   assert.equal(result.status, "operational");
 });
-test("Live Workers Standard settings provide the actual included monthly request allotment", async () => {
+test("Unconfigured quotas remain explicitly unavailable instead of inferred", async () => {
   const result = await probeCloudflare(
     { id: "limits", check: { kind: "cloudflare", target: "requests" } },
     {
       env: { ...env, CLOUDFLARE_ZONE_ID: "zone" },
       now,
       fetchImpl: async (url, options) => {
-        if (String(url).includes("/settings"))
-          return Response.json({ success: true, result: { usage_model: "standard" } });
         if (options.method === "GET") return inventoryResponse(url);
         return JSON.parse(options.body).query.includes("MonitorZone")
           ? Response.json({
@@ -257,19 +251,16 @@ test("Live Workers Standard settings provide the actual included monthly request
     },
   );
   assert.equal(result.status, "operational");
-  assert.match(result.message, /10000000 live Workers Standard included allotment/);
-  assert.match(result.message, /9999800 remaining/);
+  assert.match(result.message, /account quota is not configured/);
 });
 
-test("Live account inventory produces daily-limit rules only for products actually in use", async () => {
+test("Live account inventory is published without inventing product billing limits", async () => {
   const result = await probeCloudflare(
     { id: "limits", check: { kind: "cloudflare", target: "requests" } },
     {
       env: { ...env, CLOUDFLARE_ZONE_ID: "zone" },
       now,
       fetchImpl: async (url, options) => {
-        if (String(url).includes("/settings"))
-          return Response.json({ success: true, result: { usage_model: "standard" } });
         if (options.method === "GET") return inventoryResponse(url);
         return JSON.parse(options.body).query.includes("MonitorZone")
           ? Response.json({
@@ -290,9 +281,8 @@ test("Live account inventory produces daily-limit rules only for products actual
     },
   );
   assert.equal(result.status, "operational");
-  assert.match(result.message, /Daily account Worker requests: 100/);
-  assert.match(result.message, /no Cloudflare daily hard request limit/);
+  assert.match(result.message, /Cloudflare Worker requests today: 100/);
   assert.match(result.message, /6 Worker scripts, 10 Pages projects, 1 KV namespaces, 1 R2 buckets and 4 Durable Object namespaces; 0 D1 databases and 0 Queues/);
-  assert.match(result.message, /Paid KV has no daily hard operation cap/);
+  assert.match(result.message, /static Pages assets are free and unlimited/);
   assert.doesNotMatch(JSON.stringify(result), /private-/);
 });
