@@ -15,7 +15,12 @@ export function useStatus(services: Service[]) {
     const timeout = setTimeout(() => controller.abort(), 12_000);
     setLoading(true);
     try {
-      const response = await fetch(statusUrl, {
+      // The public GitHub raw mirror can retain an older response despite no-store.
+      // Keep one cache key per minute so a manual refresh reaches the latest published snapshot
+      // without increasing collector or Cloudflare-account API traffic.
+      const separator = statusUrl.includes("?") ? "&" : "?";
+      const snapshotUrl = `${statusUrl}${separator}v=${Math.floor(Date.now() / 60_000)}`;
+      const response = await fetch(snapshotUrl, {
         signal: controller.signal,
         cache: "no-store",
         credentials: "omit",
