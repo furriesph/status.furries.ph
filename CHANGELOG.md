@@ -16,6 +16,7 @@
 - Reduce scheduled and local continuous collection to a 10-minute default cadence to limit Cloudflare account API usage.
 - Publish retained status data from the public repository's scheduled GitHub Actions collector to the `status-data` branch.
 - Show the verified Cloudflare dashboard allowances for daily Workers requests, daily Observability events and monthly build minutes. Daily request use and CPU time use live Workers analytics; unavailable event/build use remains explicit until Cloudflare grants the required API scope.
+- Use the compact two-row service summary on desktop: status remains beside the service name and the 30-day history spans the row beneath it.
 
 
 - Introduce a public Furries PH status dashboard using the Partners v2 frontend stack.

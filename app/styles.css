@@ -315,7 +315,7 @@ h1 {
 .service-row > summary {
   padding: 16px 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 98px 158px 14px;
+  grid-template-columns: minmax(0, 1fr) 98px 14px;
   align-items: center;
   gap: 12px;
   cursor: pointer;
@@ -326,6 +326,14 @@ summary::-webkit-details-marker {
 }
 .service-row > summary:hover {
   background: #fcfbff;
+}
+.history-mini {
+  grid-column: 1 / 3;
+  grid-row: 2;
+}
+.service-row > summary .disclosure {
+  grid-column: 3;
+  grid-row: 1;
 }
 .service-copy h3 {
   font-size: 14px;
@@ -779,17 +787,6 @@ summary::-webkit-details-marker {
   .status-layout {
     grid-template-columns: minmax(0, 1fr) 280px;
     gap: 18px;
-  }
-  .service-row > summary {
-    grid-template-columns: minmax(0, 1fr) 90px 14px;
-  }
-  .history-mini {
-    grid-column: 1 / 3;
-    grid-row: 2;
-  }
-  .service-row > summary .disclosure {
-    grid-column: 3;
-    grid-row: 1;
   }
 }
 @media (max-width: 760px) {
