@@ -6,7 +6,7 @@ Commands: `pnpm dev`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm monitor
 
 Hosting target: Cloudflare Pages; output: `build/client`. Monitoring target: the existing Partners API Cloudflare Cron dispatches GitHub Actions every ten minutes at UTC minutes 07, 17, 27, 37, 47 and 57. A published snapshot remains current for 30 minutes to accommodate delivery and queue delay, then becomes Unknown. The workflow atomically retains `status.json` and `feed.xml` on the public `status-data` branch. Collector-only provider credentials are required for project telemetry; see .env.monitor.example and the runbook for GitHub secret mappings. No browser secrets or deployment credentials are needed for collection.
 
-The production browser fetches the public GitHub Contents API for `status-data` with GitHub's raw-media response, which has a short public cache. Downloadable JSON and RSS links use public raw branch files. Never authenticate public browser data access with a token. Local status URL defaults to `/status.json`.
+The production browser fetches the public raw `status-data` branch file, which has a short public cache. Downloadable JSON and RSS links use the same public raw branch files. Never authenticate public browser data access with a token. Local status URL defaults to `/status.json`.
 
 No live deployment is established by scaffolding. Initial repository inspection found no configured Git remote. Activation requirements and incident procedures are in `docs/runbook.md`.
 

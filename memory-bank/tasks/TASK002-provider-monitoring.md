@@ -82,3 +82,5 @@ The collector now publishes every incident exposed by the Supabase and Cloudflar
 ### 2026-09-13 - Live limit-panel visibility
 
 The public panels now render every currently collected rate/capacity metric: Supabase disk, database connections, pooler clients, Auth users and Realtime subscriptions; Cloudflare monthly included requests, UTC-day Worker requests, zone responses, HTTP 429 and 5xx rates, plus live account product inventory. The collector's Cloudflare Actions credential was refreshed from the active account OAuth token after the previous credential produced unavailable analytics. The remaining management-only Supabase billing allowances are intentionally shown as unavailable rather than estimated.
+
+The browser now reads the public raw `status-data` file rather than the GitHub Contents API. The latter failed client-side and caused the page to discard an otherwise valid live snapshot as unknown.
