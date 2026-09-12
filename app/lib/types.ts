@@ -16,6 +16,7 @@ export interface Service {
     | { kind: "http"; url: string; expectedStatus?: number; contains?: string }
     | { kind: "supabase"; target: "database" | "auth" | "capacity" | "limits" }
     | { kind: "cloudflare"; target: "workers" | "requests" }
+    | { kind: "sanity"; target: "media-pools" }
     | { kind: "media"; url: string }
     | { kind: "cms" }
     | { kind: "platform" | "operations"; target: string }

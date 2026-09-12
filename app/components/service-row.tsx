@@ -224,6 +224,33 @@ function serviceMetrics(
 }
 
 function productMetrics(service: Service, message: string): Metric[] {
+  if (service.id === "sanity-media-pools") {
+    const pools = /Live Sanity Content Lake media pools:\s*(\d+) image assets \/ ([^;]+);\s*(\d+) file assets \/ ([^;]+);\s*(\d+) documents/i.exec(message);
+    if (!pools) return [];
+    return [
+      {
+        label: "Image assets",
+        value: `${Number(pools[1]).toLocaleString()} · ${pools[2]}`,
+        percent: null,
+        note: "Live aggregate from Sanity Content Lake. Individual asset metadata is not published.",
+        tone: "neutral" as const,
+      },
+      {
+        label: "File assets",
+        value: `${Number(pools[3]).toLocaleString()} · ${pools[4]}`,
+        percent: null,
+        note: "Live aggregate from Sanity Content Lake.",
+        tone: "neutral" as const,
+      },
+      {
+        label: "Content documents",
+        value: Number(pools[5]).toLocaleString(),
+        percent: null,
+        note: "Current Content Lake document count. Sanity does not expose the plan storage allowance through this query.",
+        tone: "neutral" as const,
+      },
+    ];
+  }
   if (service.id === "supabase-product-limits") {
     const disk = /database disk [^()]+\((\d+)%\)/i.exec(message);
     const connections = /connection pool (\d+)\s*\/\s*(\d+)\s*\((\d+)%\)/i.exec(message);
@@ -451,6 +478,8 @@ function checkScope(service: Service): string {
       return service.check.target === "workers"
         ? "Checks recent Cloudflare Worker execution errors and quota outcomes for configured API Workers."
         : "Checks Cloudflare request volume and limit signals against configured account thresholds. Missing account analytics is a monitoring failure.";
+    case "sanity":
+      return "Reads aggregate Sanity Content Lake image, file and document counts with asset-byte totals. Individual assets and plan allowance are not exposed.";
     case "provider":
       return `Checks the ${service.check.provider === "supabase" ? "Supabase" : "Cloudflare"} provider incident feed for relevant infrastructure. Shared provider health does not prove account-specific health.`;
     case "heartbeat":

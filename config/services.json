@@ -185,6 +185,16 @@
     "dependencies": ["api", "database"]
   },
   {
+    "id": "sanity-media-pools",
+    "name": "Sanity media pools",
+    "group": "Infrastructure",
+    "description": "Content Lake image and file assets, stored media bytes and document count.",
+    "check": {
+      "kind": "sanity",
+      "target": "media-pools"
+    }
+  },
+  {
     "id": "admin",
     "name": "Platform administration",
     "group": "Operations",

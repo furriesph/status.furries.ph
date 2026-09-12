@@ -99,12 +99,14 @@ export function validateServices(services) {
     } else if (s.check?.kind === "media") {
       keys(s.check, ["kind", "url"]);
       if (!safe(s.check.url)) fail(`Invalid media URL: ${s.id}`);
-    } else if (s.check?.kind === "supabase" || s.check?.kind === "cloudflare") {
+    } else if (s.check?.kind === "supabase" || s.check?.kind === "cloudflare" || s.check?.kind === "sanity") {
       keys(s.check, ["kind", "target"]);
       const targets =
         s.check.kind === "supabase"
           ? ["database", "auth", "capacity", "limits"]
-          : ["workers", "requests"];
+          : s.check.kind === "cloudflare"
+            ? ["workers", "requests"]
+            : ["media-pools"];
       if (!targets.includes(s.check.target))
         fail(`Invalid provider target: ${s.id}`);
     } else if (s.check?.kind === "provider") {
@@ -394,6 +396,8 @@ export async function probe(
       service,
       options,
     );
+  if (service.check.kind === "sanity")
+    return (await import("./probes/sanity.mjs")).probeSanity(service, options);
   if (service.check.kind === "provider")
     return (await import("./probes/provider.mjs")).probeProvider(
       service,
