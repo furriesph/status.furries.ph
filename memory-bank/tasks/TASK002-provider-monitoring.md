@@ -87,7 +87,7 @@ The browser now reads the public raw `status-data` file rather than the GitHub C
 
 ### 2026-09-13 - Cloudflare dashboard allowances
 
-Replaced the incorrect inferred 10,000,000 monthly Workers inclusion with the verified account dashboard allowances: 100,000 Workers requests per day, 200,000 Observability events per day and 3,000 Workers build minutes per month. The request card now uses a real account-wide UTC-day analytics count and adds CPU time. The status page also renders the known Observability/build allowances without fabricating their current use: the existing credential receives HTTP 403 from the Workers Observability API and no permitted endpoint exposes build-minute consumption. The repository variables are set, tests, typecheck, validation and build are pending final deployment verification.
+Replaced the incorrect inferred 10,000,000 monthly Workers inclusion with the verified account dashboard allowances: 100,000 Workers requests per day, 200,000 Observability events per day and 3,000 Workers build minutes per month. The request card now uses a real account-wide UTC-day analytics count and adds CPU time. The status page also renders the known Observability/build allowances without fabricating their current use: the existing credential receives HTTP 403 from the Workers Observability API, which requires Cloudflare's Workers Observability Write-labelled permission for telemetry queries, and no permitted endpoint exposes build-minute consumption. The repository variables are set, tests, typecheck, validation and build are pending final deployment verification.
 
 ### 2026-09-13 - Desktop compact service rows
 

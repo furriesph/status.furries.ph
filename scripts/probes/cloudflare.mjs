@@ -233,7 +233,7 @@ export async function probeCloudflare(
     }
     details.push(`Cloudflare Worker CPU time today: ${Math.round(dayUsage.cpuTimeUs / 1000)} ms (analytics estimate).`);
     if (observabilityDaily)
-      details.push(`Cloudflare dashboard Observability events today: unavailable / ${Number(observabilityDaily)}; the collector credential is denied Workers Observability read access, so event use is not estimated.`);
+      details.push(`Cloudflare dashboard Observability events today: unavailable / ${Number(observabilityDaily)}; the collector credential lacks Cloudflare's required Workers Observability Write permission for telemetry queries, so event use is not estimated.`);
     if (buildMinutesMonthly)
       details.push(`Cloudflare dashboard Workers build minutes this month: unavailable / ${Number(buildMinutesMonthly)}; the current Cloudflare analytics API credential does not expose build-minute use.`);
     try {

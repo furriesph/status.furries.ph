@@ -15,7 +15,7 @@
 - Publish every incident exposed by Supabase and Cloudflare public summary feeds as scoped generated records, retain them as resolved history after a successful absence, and keep provider payload bodies private.
 - Reduce scheduled and local continuous collection to a 10-minute default cadence to limit Cloudflare account API usage.
 - Publish retained status data from the public repository's scheduled GitHub Actions collector to the `status-data` branch.
-- Show the verified Cloudflare dashboard allowances for daily Workers requests, daily Observability events and monthly build minutes. Daily request use and CPU time use live Workers analytics; unavailable event/build use remains explicit until Cloudflare grants the required API scope.
+- Show the verified Cloudflare dashboard allowances for daily Workers requests, daily Observability events and monthly build minutes. Daily request use and CPU time use live Workers analytics; unavailable event/build use remains explicit until Cloudflare grants the required API scope. Cloudflare requires its Workers Observability Write-labelled permission for telemetry queries, which the collector documents without granting a Global API key.
 - Use the compact two-row service summary on desktop: status remains beside the service name and the 30-day history spans the row beneath it.
 
 

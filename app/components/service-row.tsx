@@ -294,7 +294,7 @@ function productMetrics(service: Service, message: string): Metric[] {
         label: "Observability events today",
         value: `Unavailable / ${Number(observability[1]).toLocaleString()}`,
         percent: null,
-        note: "The account allowance is known. Cloudflare denied this collector the Observability-read scope required for its live count.",
+        note: "The account allowance is known. Cloudflare requires its Workers Observability Write-labelled permission for telemetry queries; this collector does not have it.",
         tone: "neutral" as const,
       },
       buildMinutes && {
