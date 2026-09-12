@@ -23,3 +23,4 @@
 - Add AI contributor instructions, a Memory Bank, operational runbook and contribution templates.
 
 Production hosting and scheduled monitoring require separate activation and verification.
+- Render all collected Supabase and Cloudflare resource/rate metrics in the public live-signal panels, including Realtime subscriptions, zone response volume, HTTP 429/5xx rates and product inventory.

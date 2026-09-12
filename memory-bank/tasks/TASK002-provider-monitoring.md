@@ -78,3 +78,7 @@ Replaced the hand-written renderer with the full public Markdown extension flavo
 
 ### Persistent provider incident history and rate-aware cadence — 2026-09-11
 The collector now publishes every incident exposed by the Supabase and Cloudflare public summary feeds as a generated record scoped to its provider component. A generated record is retained and marked resolved only after a successful later feed no longer lists it; a failed, rate-limited or malformed feed cannot silently remove it. Provider payload bodies remain private and manual Markdown IDs still win. GitHub Actions runs every 10 minutes and writes the retained public snapshot to `status-data`; the browser uses a 10-minute refresh interval. This limits account telemetry to at most 144 collections per day. Full suite: 67 tests, data validation, production build and a live rendered Incident history view with all five current provider records passed.
+
+### 2026-09-13 - Live limit-panel visibility
+
+The public panels now render every currently collected rate/capacity metric: Supabase disk, database connections, pooler clients, Auth users and Realtime subscriptions; Cloudflare monthly included requests, UTC-day Worker requests, zone responses, HTTP 429 and 5xx rates, plus live account product inventory. The collector's Cloudflare Actions credential was refreshed from the active account OAuth token after the previous credential produced unavailable analytics. The remaining management-only Supabase billing allowances are intentionally shown as unavailable rather than estimated.

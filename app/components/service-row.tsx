@@ -229,19 +229,93 @@ function productMetrics(service: Service, message: string): Metric[] {
     const connections = /connection pool (\d+)\s*\/\s*(\d+)\s*\((\d+)%\)/i.exec(message);
     const pooler = /(\d+)\s*\/\s*(\d+) pooler client connections/i.exec(message);
     const authUsers = /(\d+) Auth users/i.exec(message);
+    const realtime = /(\d+) active Realtime subscriptions/i.exec(message);
     return [
-      disk && { label: "Database disk", value: disk[0].replace(/^database disk /i, ""), percent: Number(disk[1]), note: "Live database filesystem capacity.", tone: capacityTone(Number(disk[1])) },
-      connections && { label: "Database connections", value: `${connections[1]} / ${connections[2]}`, percent: Number(connections[3]), note: "Busiest observed database connection pool.", tone: capacityTone(Number(connections[3])) },
-      pooler && { label: "Pooler clients", value: `${pooler[1]} / ${pooler[2]}`, percent: (Number(pooler[1]) / Number(pooler[2])) * 100, note: "Live client connections through the database pooler.", tone: capacityTone((Number(pooler[1]) / Number(pooler[2])) * 100) },
-      authUsers && { label: "Auth users", value: authUsers[1], percent: null, note: "Current user count; plan MAU allowance is unavailable to the collector.", tone: "neutral" as const },
+      disk && {
+        label: "Database disk",
+        value: disk[0].replace(/^database disk /i, ""),
+        percent: Number(disk[1]),
+        note: "Live database filesystem capacity.",
+        tone: capacityTone(Number(disk[1])),
+      },
+      connections && {
+        label: "Database connections",
+        value: `${connections[1]} / ${connections[2]}`,
+        percent: Number(connections[3]),
+        note: "Busiest observed database connection pool.",
+        tone: capacityTone(Number(connections[3])),
+      },
+      pooler && {
+        label: "Pooler clients",
+        value: `${pooler[1]} / ${pooler[2]}`,
+        percent: (Number(pooler[1]) / Number(pooler[2])) * 100,
+        note: "Live client connections through the database pooler.",
+        tone: capacityTone((Number(pooler[1]) / Number(pooler[2])) * 100),
+      },
+      authUsers && {
+        label: "Auth users",
+        value: authUsers[1],
+        percent: null,
+        note: "Current user count; plan MAU allowance is unavailable to the collector.",
+        tone: "neutral" as const,
+      },
+      realtime && {
+        label: "Realtime subscriptions",
+        value: realtime[1],
+        percent: null,
+        note: "Live active subscriptions. A plan allowance is unavailable to the collector.",
+        tone: "neutral" as const,
+      },
     ].filter(Boolean) as Metric[];
   }
   if (service.id === "request-limits") {
     const monthly = /Monthly account requests:\s*(\d+)\s*\/\s*(\d+)/i.exec(message);
     const daily = /Daily account Worker requests:\s*(\d+)/i.exec(message);
+    const zone = /Last 15 minutes across the zone:\s*(\d+) responses,\s*(\d+) HTTP 429,\s*(\d+) HTTP 5xx/i.exec(message);
+    const inventory = /Live Cloudflare account inventory:\s*(\d+) Worker scripts,\s*(\d+) Pages projects,\s*(\d+) KV namespaces,\s*(\d+) R2 buckets and\s*(\d+) Durable Object namespaces;\s*(\d+) D1 databases and\s*(\d+) Queues/i.exec(message);
     return [
-      monthly && { label: "Workers Standard monthly inclusion", value: `${Number(monthly[1]).toLocaleString()} / ${Number(monthly[2]).toLocaleString()} requests`, percent: (Number(monthly[1]) / Number(monthly[2])) * 100, note: "Included-use threshold. Standard has no daily hard request cap.", tone: capacityTone((Number(monthly[1]) / Number(monthly[2])) * 100) },
-      daily && { label: "Worker requests today", value: Number(daily[1]).toLocaleString(), percent: null, note: "Observed UTC-day use. No Cloudflare daily hard request cap on Workers Standard.", tone: "neutral" as const },
+      monthly && {
+        label: "Workers Standard monthly inclusion",
+        value: `${Number(monthly[1]).toLocaleString()} / ${Number(monthly[2]).toLocaleString()} requests`,
+        percent: (Number(monthly[1]) / Number(monthly[2])) * 100,
+        note: "Included-use threshold. Standard has no daily hard request cap.",
+        tone: capacityTone((Number(monthly[1]) / Number(monthly[2])) * 100),
+      },
+      daily && {
+        label: "Worker requests today",
+        value: Number(daily[1]).toLocaleString(),
+        percent: null,
+        note: "Observed UTC-day use. No Cloudflare daily hard request cap on Workers Standard.",
+        tone: "neutral" as const,
+      },
+      zone && {
+        label: "Zone responses · 15 min",
+        value: Number(zone[1]).toLocaleString(),
+        percent: null,
+        note: "Cloudflare response-count analytics for the monitored zone.",
+        tone: "neutral" as const,
+      },
+      zone && {
+        label: "Rate-limited responses · 15 min",
+        value: Number(zone[2]).toLocaleString(),
+        percent: Number(zone[1]) ? (Number(zone[2]) / Number(zone[1])) * 100 : 0,
+        note: "HTTP 429 responses observed by Cloudflare across the monitored zone.",
+        tone: Number(zone[2]) ? "bad" as const : "good" as const,
+      },
+      zone && {
+        label: "Server errors · 15 min",
+        value: Number(zone[3]).toLocaleString(),
+        percent: Number(zone[1]) ? (Number(zone[3]) / Number(zone[1])) * 100 : 0,
+        note: "HTTP 5xx responses observed by Cloudflare across the monitored zone.",
+        tone: Number(zone[3]) ? "bad" as const : "good" as const,
+      },
+      inventory && {
+        label: "Account products",
+        value: `${inventory[1]} Workers · ${inventory[2]} Pages · ${inventory[3]} KV · ${inventory[4]} R2 · ${inventory[5]} DO · ${inventory[6]} D1 · ${inventory[7]} Queues`,
+        percent: null,
+        note: "Live account inventory. Product billing totals are not exposed by the configured read-only credential.",
+        tone: "neutral" as const,
+      },
     ].filter(Boolean) as Metric[];
   }
   const window = /Last 15 min:\s*(\d+) successful,\s*(\d+) failed;\s*(\d+) overdue\/stalled/i.exec(message);
