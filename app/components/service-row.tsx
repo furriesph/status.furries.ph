@@ -370,8 +370,8 @@ function diagnose(
 }
 
 function issueCauses(message: string, service: Service) {
-  if (/429|rate.limit/i.test(message)) return "The upstream service or edge may be throttling requests, a client may be retrying aggressively, or the configured request budget may be under pressure.";
   if (/5xx|server error|execution failures/i.test(message)) return "The affected provider or application runtime returned server-side failures. A recent deployment, dependency outage, resource saturation, or malformed upstream response may be involved.";
+  if (/429|rate.limit/i.test(message)) return "The upstream service or edge may be throttling requests, a client may be retrying aggressively, or the configured request budget may be under pressure.";
   if (/capacity|disk|connections/i.test(message)) return "Database connections or disk capacity are nearing the observed threshold. Increased traffic, connection leaks, long-running queries, or storage growth may contribute.";
   if (/SMS/i.test(message)) return "No eligible online SMS device or verified SIM was observed. Device connectivity, permissions, SIM state, or the permitted-gateway configuration may need attention.";
   return `${service.name} has an observed degraded signal. The recorded evidence identifies the affected check; related dependencies and recent operational changes may be contributing.`;
