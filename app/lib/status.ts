@@ -41,13 +41,13 @@ function publicUrl(value: unknown, fallback: string): string {
 }
 export const statusUrl = publicUrl(
   import.meta.env.PROD
-    ? "https://github.com/furriesph/status.furries.ph/raw/refs/heads/status-data/status.json"
+    ? "https://raw.githubusercontent.com/furriesph/status.furries.ph/status-data/status.json"
     : import.meta.env.VITE_STATUS_URL,
   "/status.json",
 );
 export const statusDownloadUrl = publicUrl(
   import.meta.env.PROD
-    ? "https://github.com/furriesph/status.furries.ph/raw/refs/heads/status-data/status.json"
+    ? "https://raw.githubusercontent.com/furriesph/status.furries.ph/status-data/status.json"
     : import.meta.env.VITE_STATUS_URL,
   "/status.json",
 );

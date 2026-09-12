@@ -100,3 +100,7 @@ The desktop default now uses the same compact two-row service summary as the con
 ### 2026-09-13 - Sanity media-pool counters
 
 The Sanity component now publishes live image/file byte totals, a combined asset-pool progress counter and a document-pool progress counter whenever the verified account allowances are configured as repository variables. It also consumes provider rate-limit headers when available. Sanity's public APIs do not expose the Management usage dashboard, plan identity or monthly quota consumption, so empty allowance variables and absent headers are visibly unavailable instead of inferred.
+
+### 2026-09-13 - Public snapshot delivery correction
+
+The browser feed now uses the CORS-enabled public raw branch URL. The attempted GitHub web raw URL returns a cross-origin-blocked redirect in browsers, which discarded a valid fresh snapshot and made every service Unknown. Minute-scoped cache keys remain in place to receive the newest collector publication without adding provider collection traffic.

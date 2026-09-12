@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add Sanity shared-asset and document-pool counters from verified plan allowances, plus response-header API rate-window reporting when available.
+- Fix public snapshot delivery so browser clients load the current CORS-enabled `status-data` branch feed instead of treating fresh observations as unavailable.
 
 ## Unreleased
 
