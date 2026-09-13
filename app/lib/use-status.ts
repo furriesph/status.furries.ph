@@ -2,6 +2,21 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { emptySnapshot, parseSnapshot, statusUrl } from "./status";
 import type { Service } from "./types";
 
+function decodeGitHubContents(value: unknown): string {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    !("encoding" in value) ||
+    !("content" in value) ||
+    value.encoding !== "base64" ||
+    typeof value.content !== "string"
+  )
+    throw new Error("Status feed has an unexpected GitHub response.");
+  const binary = atob(value.content.replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
 export function useStatus(services: Service[]) {
   const [snapshot, setSnapshot] = useState(emptySnapshot);
   const [loading, setLoading] = useState(true);
@@ -29,7 +44,10 @@ export function useStatus(services: Service[]) {
         },
       });
       if (!response.ok) throw new Error("Status feed unavailable");
-      const text = await response.text();
+      const responseText = await response.text();
+      const text = snapshotUrl.startsWith("https://api.github.com/")
+        ? decodeGitHubContents(JSON.parse(responseText))
+        : responseText;
       if (text.length > 30_000_000) throw new Error("Status feed too large");
       const next = parseSnapshot(JSON.parse(text), services);
       if (request.current === controller) {

@@ -104,3 +104,7 @@ The Sanity component now publishes live image/file byte totals, a combined asset
 ### 2026-09-13 - Public snapshot delivery correction
 
 The browser feed now uses the CORS-enabled public raw branch URL. The attempted GitHub web raw URL returns a cross-origin-blocked redirect in browsers, which discarded a valid fresh snapshot and made every service Unknown. Minute-scoped cache keys remain in place to receive the newest collector publication without adding provider collection traffic.
+
+### 2026-09-13 - Fresh snapshot source correction
+
+GitHub's raw branch CDN can retain an old object past the collector freshness window even when the browser changes its cache key. The browser now reads the public GitHub Contents response and decodes the current Base64 payload locally. This keeps the ten-minute browser refresh rate while avoiding browser credentials, collector traffic and stale raw-file mirrors.

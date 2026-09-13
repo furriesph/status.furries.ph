@@ -4,6 +4,7 @@
 
 - Add Sanity shared-asset and document-pool counters from verified plan allowances, plus response-header API rate-window reporting when available.
 - Fix public snapshot delivery so browser clients load the current CORS-enabled `status-data` branch feed instead of treating fresh observations as unavailable.
+- Read the public GitHub Contents payload for live checks, avoiding raw-file CDN responses that can remain stale beyond the monitoring freshness window.
 
 ## Unreleased
 

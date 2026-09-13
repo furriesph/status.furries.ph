@@ -41,7 +41,7 @@ function publicUrl(value: unknown, fallback: string): string {
 }
 export const statusUrl = publicUrl(
   import.meta.env.PROD
-    ? "https://raw.githubusercontent.com/furriesph/status.furries.ph/status-data/status.json"
+    ? "https://api.github.com/repos/furriesph/status.furries.ph/contents/status.json?ref=status-data"
     : import.meta.env.VITE_STATUS_URL,
   "/status.json",
 );
