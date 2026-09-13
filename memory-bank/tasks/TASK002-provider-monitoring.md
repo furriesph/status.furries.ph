@@ -108,3 +108,5 @@ The browser feed now uses the CORS-enabled public raw branch URL. The attempted 
 ### 2026-09-13 - Fresh snapshot source correction
 
 GitHub's raw branch CDN can retain an old object past the collector freshness window even when the browser changes its cache key. The browser now reads the public GitHub Contents response and decodes the current Base64 payload locally. This keeps the ten-minute browser refresh rate while avoiding browser credentials, collector traffic and stale raw-file mirrors.
+
+The Contents request must use GitHub's JSON media type. The raw media type bypasses the response envelope and is incompatible with the Base64 decoder; the fetch selects the correct media type from the configured public endpoint.

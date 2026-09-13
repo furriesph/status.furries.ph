@@ -35,17 +35,20 @@ export function useStatus(services: Service[]) {
       // without increasing collector or Cloudflare-account API traffic.
       const separator = statusUrl.includes("?") ? "&" : "?";
       const snapshotUrl = `${statusUrl}${separator}v=${Math.floor(Date.now() / 60_000)}`;
+      const usesGitHubContents = snapshotUrl.startsWith("https://api.github.com/");
       const response = await fetch(snapshotUrl, {
         signal: controller.signal,
         cache: "no-store",
         credentials: "omit",
         headers: {
-          Accept: "application/vnd.github.raw",
+          Accept: usesGitHubContents
+            ? "application/vnd.github+json"
+            : "application/vnd.github.raw",
         },
       });
       if (!response.ok) throw new Error("Status feed unavailable");
       const responseText = await response.text();
-      const text = snapshotUrl.startsWith("https://api.github.com/")
+      const text = usesGitHubContents
         ? decodeGitHubContents(JSON.parse(responseText))
         : responseText;
       if (text.length > 30_000_000) throw new Error("Status feed too large");
