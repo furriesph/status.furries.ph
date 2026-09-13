@@ -1,7 +1,7 @@
 ---
 id: platform-v2-migration-2026-09-13
 title: Platform v2 migration maintenance
-status: identified
+status: scheduled
 impact: maintenance
 serviceIds: dashboard,rego,admin,social
 startedAt: 2026-09-13T05:35:00Z
