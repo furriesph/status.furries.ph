@@ -5,6 +5,17 @@ import remarkGfm from "remark-gfm";
 import { feedUrl } from "../lib/status";
 import type { Incident, Service } from "../lib/types";
 
+function latestIncidentUpdateAt(incident: Incident) {
+  return incident.updates.reduce(
+    (latest, update) => Math.max(latest, Date.parse(update.at)),
+    Date.parse(incident.startedAt),
+  );
+}
+
+function isActiveIncident(incident: Incident) {
+  return incident.status !== "resolved";
+}
+
 export function IncidentEntry({
   incident,
   services,
@@ -66,7 +77,11 @@ export function UpdatesPanel({
 }) {
   const recent = incidents
     .filter((i) => i.status !== "scheduled")
-    .sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt))
+    .sort(
+      (a, b) =>
+        Number(isActiveIncident(b)) - Number(isActiveIncident(a)) ||
+        latestIncidentUpdateAt(b) - latestIncidentUpdateAt(a),
+    )
     .slice(0, 3);
   const upcoming = incidents.filter(
     (i) =>
