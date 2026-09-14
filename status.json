@@ -1,60 +1,60 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-14T03:48:00.661Z",
+  "generatedAt": "2026-09-14T03:58:35.917Z",
   "observations": [
     {
       "serviceId": "website",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 210,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 191,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "rego",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 171,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 123,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "dashboard",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 220,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 159,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "social",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 179,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 183,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "moderation",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 160,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 118,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "support",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 166,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 119,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "docs",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 201,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 79,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
@@ -63,287 +63,287 @@
       "status": "operational",
       "message": "CMS signed-out access gate and Sanity shell responded as configured. Authenticated editing and SSO were not exercised.",
       "evidence": "direct",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 346
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 177
     },
     {
       "serviceId": "join",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 147,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 119,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "signals",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 149,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 146,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "api",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 368,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 295,
       "message": "Public endpoint responded and matched expected content; authenticated workflows are monitored separately.",
       "evidence": "direct"
     },
     {
       "serviceId": "admin-portal",
       "status": "not_launched",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
       "latencyMs": null,
       "message": "Not launched: the administration portal is a prelaunch scaffold.",
       "evidence": "direct"
     },
     {
       "serviceId": "auth",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 5212,
-      "message": "Supabase returned a server error.",
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 588,
+      "message": "Authentication health endpoint responded successfully.",
       "evidence": "direct"
     },
     {
       "serviceId": "database",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 5189,
-      "message": "Supabase returned a server error.",
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 574,
+      "message": "Read-only database query succeeded.",
       "evidence": "direct"
     },
     {
       "serviceId": "media",
-      "status": "outage",
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 91
+      "status": "operational",
+      "message": "Public media proxy delivered a verified image payload. Upload and protected-file workflows are not exercised.",
+      "evidence": "direct",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 308
     },
     {
       "serviceId": "sanity-media-pools",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 333,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 271,
       "message": "Live Sanity Content Lake media pools: 137 image assets / 41.54 MiB; 1 file assets / 7.9 KiB; 138 documents. Live media-pool quotas: shared assets 43570915 B / 100000000000 B (0%); documents 138 / 10000 (1%). Direct Content Lake API rate window: 1 / 500 used (0%); 499 remaining.",
       "evidence": "direct"
     },
     {
       "serviceId": "admin",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 5529,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 727,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "ems",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 5328,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 687,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "eps",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 805,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 1007,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "finance",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 710,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 692,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "assets",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 178,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 639,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "hr",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 825,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 649,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "lan",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 670,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 489,
       "message": "LAN telemetry is readable: 0 active unexpired sessions, 0 recent projected operations, 0 recent conflicts/rejections. No LAN session is currently active, so synchronization is idle and not being exercised.",
       "evidence": "direct"
     },
     {
       "serviceId": "pawsports",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 827,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 678,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "reports",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 256,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 193,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "registration",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 1066,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 1036,
+      "message": "Data reads and public discovery API responded. Writes and protected actions were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "payments",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 212,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 395,
+      "message": "Manual payment confirmation and reconciliation records are readable: 0 registrations, 0 shop payments confirmed in the last 15 minutes. No hosted external checkout provider is configured; that separate prelaunch capability is not inferred.",
+      "evidence": "direct"
     },
     {
       "serviceId": "external-checkout",
       "status": "not_launched",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
       "latencyMs": null,
       "message": "Not launched: no hosted external payment provider is configured for the platform.",
       "evidence": "direct"
     },
     {
       "serviceId": "dealers",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 423,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 384,
+      "message": "Service data reads succeeded. Protected actions and writes were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "social-workflows",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 811,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 423,
+      "message": "Data reads and public discovery API responded. Writes and protected actions were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "federation",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 275,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 356,
+      "message": "Social publishing. Last 15 min: 0 successful, 0 failed; 0 overdue/stalled. Evidence covers recorded provider publishing; federation inbox delivery is not tested. The monitored queues are currently idle and readable; active execution is not being exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "surveys",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 789,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 564,
+      "message": "Data reads and public discovery API responded. Writes and protected actions were not exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "email",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 1501,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 1445,
+      "message": "Email dispatch. Last 15 min: 0 successful, 0 failed; 0 overdue/stalled. Email gateway GET readiness passed; send authorization, quotas and inbox delivery are not tested. Recorded sends are not inbox delivery proof.",
+      "evidence": "direct"
     },
     {
       "serviceId": "discord-delivery",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 551,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 589,
+      "message": "Discord dispatch. Last 15 min: 0 successful, 0 failed; 0 overdue/stalled. discord bot authentication passed; destination permissions and message delivery are not tested. Recorded sends are not inbox delivery proof.",
+      "evidence": "direct"
     },
     {
       "serviceId": "telegram-delivery",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 2343,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "unknown",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 557,
+      "message": "telegram collector readiness access was denied (HTTP 401); production credential parity is unverified. Last 15 min: 0 successful, 0 failed; 0 overdue/stalled.",
+      "evidence": "monitoring-gap"
     },
     {
       "serviceId": "sms",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 763,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "degraded",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 706,
+      "message": "SMS readiness: 0 fresh permitted online devices, 0 fresh verified active SIMs. Last 15 min: 0 successful, 0 failed; 0 overdue/stalled. No message was sent by this check.",
+      "evidence": "direct"
     },
     {
       "serviceId": "jobs",
-      "status": "outage",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 272,
-      "message": "Dependent Operational database reports outage. Inspect the dependency for scope and details.",
-      "evidence": "dependency"
+      "status": "operational",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 327,
+      "message": "Background dispatch. Last 15 min: 0 successful, 0 failed; 0 overdue/stalled. Evidence covers asset webhooks and planning outbox only; other scheduled jobs need separate telemetry. The monitored queues are currently idle and readable; active execution is not being exercised.",
+      "evidence": "direct"
     },
     {
       "serviceId": "supabase-provider",
       "status": "degraded",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 235,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 114,
       "message": "Provider reports degraded for API Gateway. This is provider-wide evidence, not confirmation of project impact.",
       "evidence": "dependency"
     },
     {
       "serviceId": "cloudflare-provider",
       "status": "degraded",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 270,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 66,
       "message": "Provider reports degraded for Workers. This is provider-wide evidence, not confirmation of project impact.",
       "evidence": "dependency"
     },
     {
       "serviceId": "database-capacity",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 1064,
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 1190,
       "message": "Database connections and disk have more than 20% headroom.",
       "evidence": "direct"
     },
     {
       "serviceId": "cloudflare-workers",
       "status": "degraded",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 351,
-      "message": "Worker resource-limit failures: 6; execution failures: 6 / 205 observed requests in the last 15 minutes (analytics estimates).",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 281,
+      "message": "Worker resource-limit failures: 7; execution failures: 7 / 201 observed requests in the last 15 minutes (analytics estimates).",
       "evidence": "direct"
     },
     {
       "serviceId": "supabase-product-limits",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 1832,
-      "message": "Live Supabase product limits: database disk 398.8 MiB / 1.93 GiB (20%); busiest database connection pool 8 / 60 (13%); 50 Auth users; 0 active Realtime subscriptions; 1 / 200 pooler client connections. Supabase Management API requests across the latest 15 one-minute samples: Auth 14; Realtime 0; REST 889; Storage 0. Current Auth rate limits per configured rolling hour: anonymous users 30; email sends 150; SMS sends 30; token refreshes 150; verification attempts 30; OTP requests 30; Web3 requests 30. Organization plan allowances, MAU, egress and Storage billing usage are not inferred.",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 1579,
+      "message": "Live Supabase product limits: database disk 398.8 MiB / 1.93 GiB (20%); busiest database connection pool 11 / 60 (18%); 50 Auth users; 0 active Realtime subscriptions; 1 / 200 pooler client connections. Supabase Management API requests across the latest 15 one-minute samples: Auth 11; Realtime 0; REST 928; Storage 0. Current Auth rate limits per configured rolling hour: anonymous users 30; email sends 150; SMS sends 30; token refreshes 150; verification attempts 30; OTP requests 30; Web3 requests 30. Organization plan allowances, MAU, egress and Storage billing usage are not inferred.",
       "evidence": "direct"
     },
     {
       "serviceId": "request-limits",
       "status": "operational",
-      "checkedAt": "2026-09-14T03:48:00.661Z",
-      "latencyMs": 2194,
-      "message": "Account request usage is below configured warning levels. Cloudflare dashboard Worker requests today: 3279 / 100000 (analytics estimate; account quota). Cloudflare Worker CPU time today: 15130 ms (analytics estimate). Cloudflare dashboard Observability events today: 3405 / 200000 (live telemetry query). Cloudflare dashboard Workers build minutes this month: unavailable / 3000; the current Cloudflare analytics API credential does not expose build-minute use. Live Cloudflare account inventory: 6 Worker scripts, 54 Pages projects, 1 KV namespaces, 1 R2 buckets and 4 Durable Object namespaces; 0 D1 databases and 0 Queues. Daily limit scope for active products: static Pages assets are free and unlimited. Product billing usage is unavailable to this collector; account dashboard quotas are published only when explicitly configured from the account plan. Additional monitoring detail: Zone response-code analytics are unavailable or incomplete. Analytics are sampled estimates, not billing totals.",
+      "checkedAt": "2026-09-14T03:58:35.917Z",
+      "latencyMs": 1992,
+      "message": "Account request usage is below configured warning levels. Cloudflare dashboard Worker requests today: 3430 / 100000 (analytics estimate; account quota). Cloudflare Worker CPU time today: 15703 ms (analytics estimate). Cloudflare dashboard Observability events today: 3560 / 200000 (live telemetry query). Cloudflare dashboard Workers build minutes this month: unavailable / 3000; the current Cloudflare analytics API credential does not expose build-minute use. Live Cloudflare account inventory: 6 Worker scripts, 54 Pages projects, 1 KV namespaces, 1 R2 buckets and 4 Durable Object namespaces; 0 D1 databases and 0 Queues. Daily limit scope for active products: static Pages assets are free and unlimited. Product billing usage is unavailable to this collector; account dashboard quotas are published only when explicitly configured from the account plan. Additional monitoring detail: Zone response-code analytics are unavailable or incomplete. Analytics are sampled estimates, not billing totals.",
       "evidence": "direct"
     }
   ],
@@ -1745,288 +1745,288 @@
       "serviceId": "admin",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 14
+      "checks": 24,
+      "operationalChecks": 15
     },
     {
       "serviceId": "api",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "assets",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "auth",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 18
+      "checks": 24,
+      "operationalChecks": 19
     },
     {
       "serviceId": "cloudflare-provider",
       "date": "2026-09-14",
       "status": "degraded",
-      "checks": 23,
+      "checks": 24,
       "operationalChecks": 0
     },
     {
       "serviceId": "cloudflare-workers",
       "date": "2026-09-14",
       "status": "degraded",
-      "checks": 23,
+      "checks": 24,
       "operationalChecks": 12
     },
     {
       "serviceId": "cms",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "dashboard",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "database",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "database-capacity",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "dealers",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "discord-delivery",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "docs",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "email",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 11
+      "checks": 24,
+      "operationalChecks": 12
     },
     {
       "serviceId": "ems",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 14
+      "checks": 24,
+      "operationalChecks": 15
     },
     {
       "serviceId": "eps",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "federation",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "finance",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "hr",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "jobs",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "join",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "lan",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "media",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "moderation",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "pawsports",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "payments",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "registration",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "rego",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "reports",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "request-limits",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "sanity-media-pools",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "signals",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "sms",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
+      "checks": 24,
       "operationalChecks": 0
     },
     {
       "serviceId": "social",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "social-workflows",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "supabase-product-limits",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "supabase-provider",
       "date": "2026-09-14",
       "status": "degraded",
-      "checks": 23,
+      "checks": 24,
       "operationalChecks": 0
     },
     {
       "serviceId": "support",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     },
     {
       "serviceId": "surveys",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
-      "operationalChecks": 15
+      "checks": 24,
+      "operationalChecks": 16
     },
     {
       "serviceId": "telegram-delivery",
       "date": "2026-09-14",
       "status": "outage",
-      "checks": 23,
+      "checks": 24,
       "operationalChecks": 0
     },
     {
       "serviceId": "website",
       "date": "2026-09-14",
       "status": "operational",
-      "checks": 23,
-      "operationalChecks": 23
+      "checks": 24,
+      "operationalChecks": 24
     }
   ],
   "incidents": [
