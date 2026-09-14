@@ -6,7 +6,7 @@ import "./styles.css";
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
+      <head><script defer data-cfasync="false" data-fph-issue-reporter="" data-site="status" data-api-base="https://api.furries.ph" src="https://api.furries.ph/public/site-reports/widget.js" />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#faf8fc" />
